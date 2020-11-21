@@ -43,7 +43,7 @@ public class PlayerInteractListener implements Listener {
                 final Location location = block.getLocation();
                 final Island island = islandManager.getIslandViaLocation(location);
                 if (island != null) {
-                    if (block instanceof Container && island.getPermissions(user).containers) {
+                    if (block.getState() instanceof Container && island.getPermissions(user).useContainers) {
                         return;
                     }
                     if (!island.getPermissions(user).interact) {
