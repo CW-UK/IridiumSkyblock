@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,6 +43,9 @@ public class PlayerInteractListener implements Listener {
                 final Location location = block.getLocation();
                 final Island island = islandManager.getIslandViaLocation(location);
                 if (island != null) {
+                    if (block instanceof Container && island.getPermissions(user).containers) {
+                        return;
+                    }
                     if (!island.getPermissions(user).interact) {
                         event.setCancelled(true);
                         return;

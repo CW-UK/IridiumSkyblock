@@ -75,7 +75,7 @@ public class Config {
     public Map<Role, Permissions> defaultPermissions = new HashMap<Role, Permissions>() {{
         for (Role role : Role.values()) {
             if (role == Role.Visitor) {
-                put(role, new Permissions(false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false));
+                put(role, new Permissions(false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false));
             } else {
                 put(role, new Permissions());
             }
