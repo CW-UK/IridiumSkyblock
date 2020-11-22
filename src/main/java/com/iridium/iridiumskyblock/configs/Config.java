@@ -99,6 +99,29 @@ public class Config {
         put(XMaterial.SPAWNER, 10);
     }};
 
+    public Map<XMaterial, Boolean> containerBlocks = new HashMap<XMaterial, Boolean>() {{
+        put(XMaterial.BARREL, true);
+        put(XMaterial.BEACON, true);
+        put(XMaterial.BEEHIVE, true);
+        put(XMaterial.BELL, true);
+        put(XMaterial.BLAST_FURNACE, true);
+        put(XMaterial.BREWING_STAND, true);
+        put(XMaterial.CAMPFIRE, true);
+        put(XMaterial.CHEST, true);
+        put(XMaterial.DISPENSER, true);
+        put(XMaterial.DROPPER, true);
+        put(XMaterial.ENCHANTING_TABLE, true);
+        put(XMaterial.ENDER_CHEST, true);
+        put(XMaterial.FURNACE, true);
+        put(XMaterial.HOPPER, true);
+        put(XMaterial.JUKEBOX, true);
+        put(XMaterial.LECTERN, true);
+        put(XMaterial.SHULKER_BOX, true);
+        put(XMaterial.SMOKER, true);
+        put(XMaterial.SOUL_CAMPFIRE, true);
+        put(XMaterial.TRAPPED_CHEST, true);
+    }};
+
     public Map<XMaterial, Double> blockvalue = null;
     public Map<String, Double> spawnervalue = null;
     public List<XBiome> biomes = null;

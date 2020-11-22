@@ -1,6 +1,8 @@
 package com.iridium.iridiumskyblock.listeners;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.iridium.iridiumskyblock.*;
+import com.iridium.iridiumskyblock.configs.Config;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -43,7 +45,14 @@ public class PlayerInteractListener implements Listener {
                 final Location location = block.getLocation();
                 final Island island = islandManager.getIslandViaLocation(location);
                 if (island != null) {
-                    if (block.getState() instanceof Container) {
+
+                    final Material material = block.getType();
+                    final XMaterial xmaterial = XMaterial.matchXMaterial(material);
+                    final Config config = IridiumSkyblock.getConfiguration();
+                    final Boolean isContainer = config.containerBlocks.get(xmaterial);
+
+                    //if (block.getState() instanceof Container) {
+                    if (isContainer != null) {
                         if (island.getPermissions(user).useContainers) return;
                         event.setCancelled(true);
                         return;

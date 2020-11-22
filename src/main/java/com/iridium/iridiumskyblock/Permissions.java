@@ -58,6 +58,6 @@ public class Permissions {
         killMobs = true;
         pickupItems = true;
         breakSpawners = true;
-        useContainers = true;
+        useContainers = false;
     }
 }
