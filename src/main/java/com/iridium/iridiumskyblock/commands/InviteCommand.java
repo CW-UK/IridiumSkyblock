@@ -68,14 +68,14 @@ public class InviteCommand extends Command {
 
     private void runCommand(Player player, OfflinePlayer invitedPlayer) {
         player.sendMessage(Utils
-            .color(IridiumSkyblock.getMessages().playerInvited.replace("%player%", invitedPlayer.getName()).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
+                .color(IridiumSkyblock.getMessages().playerInvited.replace("%player%", invitedPlayer.getName()).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
         if (invitedPlayer.getPlayer() != null) {
             BaseComponent[] components = TextComponent.fromLegacyText(Utils.color(IridiumSkyblock.getMessages().invitedByPlayer.replace("%player%", player
-                .getName()).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
+                    .getName()).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
 
             ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/is join " + player
-                .getName());
-            HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to join players island!").create());
+                    .getName());
+            HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(IridiumSkyblock.getMessages().inviteHoverMessage).create());
             for (BaseComponent component : components) {
                 component.setClickEvent(clickEvent);
                 component.setHoverEvent(hoverEvent);
