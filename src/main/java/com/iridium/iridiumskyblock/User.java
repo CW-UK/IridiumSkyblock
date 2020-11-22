@@ -1,12 +1,9 @@
 package com.iridium.iridiumskyblock;
 
-import java.util.concurrent.TimeUnit;
 import org.bukkit.OfflinePlayer;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class User {
 
@@ -23,6 +20,7 @@ public class User {
     public transient boolean teleportingHome;
     public transient boolean tookInterestMessage;
     public Date lastCreate;
+    private transient List<Object> holograms;
 
     public User(OfflinePlayer p) {
         invites = new HashSet<>();
@@ -81,4 +79,23 @@ public class User {
         return IridiumSkyblock.getIslandManager().users.containsKey(p.getUniqueId().toString()) ? IridiumSkyblock.getIslandManager().users.get(p.getUniqueId().toString()) : new User(p);
     }
 
+    public List<Object> getHolograms() {
+        if (holograms == null) holograms = new ArrayList<>();
+        return holograms;
+    }
+
+    public void addHologram(Object object) {
+        if (holograms == null) holograms = new ArrayList<>();
+        holograms.add(object);
+    }
+
+    public void removeHologram(Object object) {
+        if (holograms == null) holograms = new ArrayList<>();
+        holograms.remove(object);
+    }
+
+    public void clearHolograms() {
+        if (holograms == null) holograms = new ArrayList<>();
+        holograms.clear();
+    }
 }

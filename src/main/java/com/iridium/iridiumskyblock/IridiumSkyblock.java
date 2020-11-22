@@ -365,6 +365,10 @@ public class IridiumSkyblock extends JavaPlugin {
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.closeInventory();
+                User user = User.getUser(p);
+                for (Object object : user.getHolograms()) {
+                    IridiumSkyblock.nms.removeHologram(p, object);
+                }
             }
 
             getLogger().info("-------------------------------");

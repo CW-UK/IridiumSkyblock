@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -75,6 +76,7 @@ public class BlockBreakListener implements Listener {
     public void onMonitorBreakBlock(BlockBreakEvent event) {
         try {
             final Block block = event.getBlock();
+            final BlockState blockState = block.getState();
             final Location location = block.getLocation();
             final IslandManager islandManager = IridiumSkyblock.getIslandManager();
             final Island island = islandManager.getIslandViaLocation(location);
@@ -89,6 +91,17 @@ public class BlockBreakListener implements Listener {
             }
 
             island.failedGenerators.remove(location);
+
+            if (island.stackedBlocks.containsKey(location)) {
+                if (island.stackedBlocks.get(location) == 2) {
+                    island.stackedBlocks.remove(location);
+                } else {
+                    island.stackedBlocks.compute(location, (loc, original) -> original - 1);
+                }
+                Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> blockState.update(true, true));
+                island.sendHomograms();
+            }
+
         } catch (Exception e) {
             IridiumSkyblock.getInstance().sendErrorMessage(e);
         }

@@ -62,6 +62,7 @@ public class PlayerJoinLeaveListener implements Listener {
             if (island == null) return;
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> island.sendBorder(player), 1);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> island.sendHomograms(player), 1);
         } catch (Exception e) {
             IridiumSkyblock.getInstance().sendErrorMessage(e);
         }

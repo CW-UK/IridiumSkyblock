@@ -2,7 +2,9 @@ package com.iridium.iridiumskyblock.configs;
 
 import com.iridium.iridiumskyblock.Role;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Messages {
@@ -130,6 +132,8 @@ public class Messages {
     public String expelledVisitor = "%prefix% &7%player% has been expelled from your island.";
     public String cantExpelPlayer = "%prefix% &7%player% cannot be expelled!";
     public String cantExpelMember = "%prefix% &7%player% is in your island team";
+
+    public List<String> stackedBlocksHologram = Arrays.asList("&b&l [{amount}X] &b{block}");
 
     public Map<Role, String> roles = new HashMap<Role, String>() {{
         for (Role role : Role.values()) {

@@ -81,6 +81,7 @@ public class PlayerPortalListener implements Listener {
                 Island is = IridiumSkyblock.getIslandManager().getIslandViaLocation(player.getLocation());
                 if (is != null) {
                     is.sendBorder(player);
+                    is.sendHomograms(player);
                 }
             });
         } catch (Exception e) {

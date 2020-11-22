@@ -1,11 +1,8 @@
 package com.iridium.iridiumskyblock.listeners;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.spawn.EssentialsSpawn;
 import com.iridium.iridiumskyblock.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,6 +38,7 @@ public class PlayerTeleportListener implements Listener {
             if ((toIsland.isVisit() && !toIsland.isBanned(user)) || user.bypassing) {
                 if (!toIsland.isInIsland(fromLocation)) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(IridiumSkyblock.getInstance(), () -> toIsland.sendBorder(player), 1);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(IridiumSkyblock.getInstance(), () -> toIsland.sendHomograms(player), 1);
                     if (user.islandID != toIsland.getId()) {
                         player.sendMessage(Utils.color(IridiumSkyblock.getMessages().visitingIsland.replace("%player%", User.getUser(toIsland.getOwner()).name).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
                         if (player.hasPermission("iridiumskyblock.silentvisit")) return;

@@ -15,4 +15,5 @@ public interface NMS {
     void sendSubTitle(Player player, String message, int fadeIn, int displayTime, int fadeOut);
     void sendTitle(Player player, String message, int fadeIn, int displayTime, int fadeOut);
     void sendHologram(Player player, Location location, List<String> text);
+    void removeHologram(Player player, Object hologram);
 }

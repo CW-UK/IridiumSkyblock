@@ -76,8 +76,18 @@ public class BlockPlaceListener implements Listener {
                 }
             }
 
-            if (!island.getPermissions(user).placeBlocks)
+            if (!island.getPermissions(user).placeBlocks) {
                 event.setCancelled(true);
+            } else {
+                if (player.isSneaking() && event.getBlockAgainst().getType() == event.getBlock().getType() && Utils.isBlockValuable(event.getBlockAgainst())) {
+                    island.stackedBlocks.compute(event.getBlockAgainst().getLocation(), (loc, original) -> {
+                        if (original == null) return 2;
+                        return original + 1;
+                    });
+                    Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> island.sendHomograms());
+                    Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> block.setType(Material.AIR, false));
+                }
+            }
         } catch (Exception e) {
             IridiumSkyblock.getInstance().sendErrorMessage(e);
         }

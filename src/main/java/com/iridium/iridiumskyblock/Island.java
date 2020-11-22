@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Entity;
@@ -150,6 +151,7 @@ public class Island {
 
     public transient ConcurrentHashMap<String, Integer> valuableBlocks;
     public transient ConcurrentHashMap<String, Integer> spawners;
+    public ConcurrentHashMap<Location, Integer> stackedBlocks;
 
     @Getter
     private final List<Warp> warps;
@@ -271,6 +273,14 @@ public class Island {
 
         valuableBlocks.clear();
         spawners.clear();
+
+        for (Location location : stackedBlocks.keySet()) {
+            XMaterial xMaterial = XMaterial.matchXMaterial(location.getBlock().getType());
+            valuableBlocks.compute(xMaterial.name(), (xmaterialName, original) -> {
+                if (original == null) return stackedBlocks.get(location) - 1;
+                return original + (stackedBlocks.get(location) - 1);
+            });
+        }
 
         for (int x = minx; x <= maxx; x++) {
             for (int z = minz; z <= maxz; z++) {
@@ -692,6 +702,7 @@ public class Island {
         if (biome == null) biome = IridiumSkyblock.getConfiguration().defaultBiome;
         if (valuableBlocks == null) valuableBlocks = new ConcurrentHashMap<>();
         if (spawners == null) spawners = new ConcurrentHashMap<>();
+        if (stackedBlocks == null) stackedBlocks = new ConcurrentHashMap<>();
         if (members == null) {
             members = new HashSet<>();
             members.add(owner);
@@ -800,6 +811,25 @@ public class Island {
                 Player p = Bukkit.getPlayer(user.name);
                 if (p != null) p.getInventory().clear();
             }
+        }
+    }
+
+    public void sendHomograms(Player player) {
+        User user = User.getUser(player);
+        for (Object object : user.getHolograms()) {
+            IridiumSkyblock.nms.removeHologram(player, object);
+        }
+        user.clearHolograms();
+        for (Location location : stackedBlocks.keySet()) {
+            Block block = location.getBlock();
+            int amount = stackedBlocks.get(location);
+            IridiumSkyblock.nms.sendHologram(player, block.getLocation().add(0.5, -0.5, 0.5), Utils.processMultiplePlaceholders(IridiumSkyblock.getMessages().stackedBlocksHologram, Arrays.asList(new Utils.Placeholder("amount", amount + ""), new Utils.Placeholder("block", XMaterial.matchXMaterial(block.getType()).toString()))));
+        }
+    }
+
+    public void sendHomograms() {
+        for (Player player : getPlayersOnIsland()) {
+            sendHomograms(player);
         }
     }
 

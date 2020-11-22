@@ -3,6 +3,7 @@ package com.iridium.iridiumskyblock.nms;
 import com.cryptomorin.xseries.XMaterial;
 import com.iridium.iridiumskyblock.Color;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
 import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.ChatColor;
@@ -77,6 +78,8 @@ public class v1_15_R1 implements NMS {
 
     @Override
     public void sendHologram(Player player, Location location, List<String> text) {
+        location = location.add(0, 0.4 * (text.size() - 1), 0);
+        User user = User.getUser(player);
         CraftWorld craftWorld = (CraftWorld) location.getWorld();
         for (int i = -1; ++i < text.size(); ) {
             EntityArmorStand entityArmorStand = new EntityArmorStand(craftWorld.getHandle(), location.getX(), location.getY(), location.getZ());
@@ -85,11 +88,20 @@ public class v1_15_R1 implements NMS {
             entityArmorStand.setCustomNameVisible(true);
             entityArmorStand.setCustomName(new ChatMessage(Utils.color(text.get(i))));
 
+            user.addHologram(entityArmorStand);
+
             PacketPlayOutSpawnEntityLiving packetPlayOutSpawnEntityLiving = new PacketPlayOutSpawnEntityLiving(entityArmorStand);
             PacketPlayOutEntityMetadata packetPlayOutEntityMetadata = new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true);
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutSpawnEntityLiving);
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutEntityMetadata);
             location = location.subtract(0, 0.4, 0);
         }
+    }
+
+    @Override
+    public void removeHologram(Player player, Object hologram) {
+        EntityArmorStand entityArmorStand = (EntityArmorStand) hologram;
+        PacketPlayOutEntityDestroy packetPlayOutEntityDestroy = new PacketPlayOutEntityDestroy(entityArmorStand.getId());
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutEntityDestroy);
     }
 }
