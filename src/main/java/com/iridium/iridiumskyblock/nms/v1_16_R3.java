@@ -16,6 +16,8 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 
+import java.util.List;
+
 public class v1_16_R3 implements NMS {
     @Override
     public void setBlockFast(Block block, int blockId, byte data) {
@@ -71,5 +73,23 @@ public class v1_16_R3 implements NMS {
         IChatBaseComponent iChatBaseComponent = IChatBaseComponent.ChatSerializer.a(ChatColor.translateAlternateColorCodes('&', "{\"text\":\"" + message + "\"}"));
         PacketPlayOutTitle packetPlayOutTitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, iChatBaseComponent, fadeIn, displayTime, fadeOut);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutTitle);
+    }
+
+    @Override
+    public void sendHologram(Player player, Location location, List<String> text) {
+        CraftWorld craftWorld = (CraftWorld) location.getWorld();
+        for (int i = -1; ++i < text.size(); ) {
+            EntityArmorStand entityArmorStand = new EntityArmorStand(craftWorld.getHandle(), location.getX(), location.getY(), location.getZ());
+
+            entityArmorStand.setInvisible(true);
+            entityArmorStand.setCustomNameVisible(true);
+            entityArmorStand.setCustomName(new ChatMessage(Utils.color(text.get(i))));
+
+            PacketPlayOutSpawnEntityLiving packetPlayOutSpawnEntityLiving = new PacketPlayOutSpawnEntityLiving(entityArmorStand);
+            PacketPlayOutEntityMetadata packetPlayOutEntityMetadata = new PacketPlayOutEntityMetadata(entityArmorStand.getId(), entityArmorStand.getDataWatcher(), true);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutSpawnEntityLiving);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutEntityMetadata);
+            location = location.subtract(0, 0.4, 0);
+        }
     }
 }

@@ -7,7 +7,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class IslandManager {
@@ -48,8 +47,8 @@ public class IslandManager {
         c.add(Calendar.SECOND, IridiumSkyblock.getConfiguration().regenCooldown);
         user.lastCreate = c.getTime();
 
-        Location pos1 = nextLocation.clone().subtract((IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00) + 1, 0, (IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00) + 1);
-        Location pos2 = nextLocation.clone().add((IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00) + 1, 0, (IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00) + 1);
+        Location pos1 = nextLocation.clone().subtract((IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00), 0, (IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00));
+        Location pos2 = nextLocation.clone().add((IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00), 0, (IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(1).size / 2.00));
         Location center = nextLocation.clone().add(0, 100, 0);
         Location home = nextLocation.clone();
 

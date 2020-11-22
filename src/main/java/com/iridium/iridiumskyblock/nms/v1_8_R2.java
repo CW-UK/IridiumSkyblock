@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.nms;
 
 import com.iridium.iridiumskyblock.Color;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
+import com.iridium.iridiumskyblock.Utils;
 import net.minecraft.server.v1_8_R2.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -11,6 +12,8 @@ import org.bukkit.craftbukkit.v1_8_R2.CraftChunk;
 import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class v1_8_R2 implements NMS {
 
@@ -69,5 +72,21 @@ public class v1_8_R2 implements NMS {
         IChatBaseComponent iChatBaseComponent = IChatBaseComponent.ChatSerializer.a(ChatColor.translateAlternateColorCodes('&', "{\"text\":\"" + message + "\"}"));
         PacketPlayOutTitle packetPlayOutTitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, iChatBaseComponent, fadeIn, displayTime, fadeOut);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutTitle);
+    }
+
+    @Override
+    public void sendHologram(Player player, Location location, List<String> text) {
+        CraftWorld craftWorld = (CraftWorld) location.getWorld();
+        for (int i = -1; ++i < text.size(); ) {
+            EntityArmorStand entityArmorStand = new EntityArmorStand(craftWorld.getHandle(), location.getX(), location.getY(), location.getZ());
+
+            entityArmorStand.setInvisible(true);
+            entityArmorStand.setCustomNameVisible(true);
+            entityArmorStand.setCustomName(Utils.color(text.get(i)));
+
+            PacketPlayOutSpawnEntityLiving packetPlayOutSpawnEntityLiving = new PacketPlayOutSpawnEntityLiving(entityArmorStand);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutSpawnEntityLiving);
+            location = location.subtract(0, 0.4, 0);
+        }
     }
 }

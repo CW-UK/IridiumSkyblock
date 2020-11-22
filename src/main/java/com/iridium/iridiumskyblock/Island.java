@@ -1097,13 +1097,18 @@ public class Island {
     public void setBiome(XBiome biome) {
         this.biome = biome;
         final World world = IridiumSkyblock.getIslandManager().getWorld();
-        biome.setBiome(getPos1(), getPos2()).thenRunAsync(() -> {
+        final List<Chunk> chunks = new ArrayList<Chunk>() {{
             for (int X = getPos1().getChunk().getX(); X <= getPos2().getChunk().getX(); X++) {
                 for (int Z = getPos1().getChunk().getZ(); Z <= getPos2().getChunk().getZ(); Z++) {
-                    for (Player p : world.getPlayers()) {
-                        if (p.getLocation().getWorld() == world) {
-                            IridiumSkyblock.nms.sendChunk(p, world.getChunkAt(X, Z));
-                        }
+                    add(world.getChunkAt(X, Z));
+                }
+            }
+        }};
+        biome.setBiome(getPos1(), getPos2()).thenRunAsync(() -> {
+            for (Chunk c : chunks) {
+                for (Player p : world.getPlayers()) {
+                    if (p.getLocation().getWorld() == world) {
+                        IridiumSkyblock.nms.sendChunk(p, c);
                     }
                 }
             }
