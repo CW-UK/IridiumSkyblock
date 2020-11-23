@@ -482,6 +482,7 @@ public class Island {
         final int vaultReward = level.vaultReward;
         this.crystals += crystalReward;
         this.money += vaultReward;
+        final List<String> commandReward = level.commandReward;
         Bukkit.getPluginManager().callEvent(new MissionCompleteEvent(this, missionName, level.type, levelProgress));
         final Messages messages = IridiumSkyblock.getMessages();
         final String titleMessage = messages.missionComplete
@@ -496,6 +497,9 @@ public class Island {
             if (p == null) continue;
             IridiumSkyblock.nms.sendTitle(p, titleMessage, 20, 40, 20);
             IridiumSkyblock.nms.sendSubTitle(p, subTitleMessage, 20, 40, 20);
+            for (String reward : commandReward) {
+                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), reward.replace("%player%", p.getName()).replace("%uuid%", member));
+            }
         }
 
         //Reset current mission status
