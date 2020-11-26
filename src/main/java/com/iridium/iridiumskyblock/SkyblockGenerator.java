@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-class SkyblockGenerator extends ChunkGenerator {
+public class SkyblockGenerator extends ChunkGenerator {
 
     public byte[][] blockSections;
 

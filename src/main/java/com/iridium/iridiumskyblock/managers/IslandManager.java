@@ -1,5 +1,6 @@
-package com.iridium.iridiumskyblock;
+package com.iridium.iridiumskyblock.managers;
 
+import com.iridium.iridiumskyblock.*;
 import com.iridium.iridiumskyblock.configs.Config;
 import com.iridium.iridiumskyblock.configs.Schematics;
 import org.bukkit.*;
