@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 public class IslandManager {
 
     public Map<Integer, Island> islands = new HashMap<>();
-    public Map<String, User> users = new HashMap<>();
     public Map<List<Integer>, Set<Integer>> islandCache = new HashMap<>();
 
     public transient Integer id = 0;

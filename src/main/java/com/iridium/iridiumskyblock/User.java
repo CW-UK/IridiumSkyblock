@@ -1,5 +1,7 @@
 package com.iridium.iridiumskyblock;
 
+import com.iridium.iridiumskyblock.managers.UserManager;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.util.*;
@@ -22,16 +24,17 @@ public class User {
     public Date lastCreate;
     private transient List<Object> holograms;
 
-    public User(OfflinePlayer p) {
+
+    public User(UUID uuid) {
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         invites = new HashSet<>();
-        this.player = p.getUniqueId().toString();
-        this.name = p.getName();
+        this.player = uuid.toString();
+        this.name = player.getName();
         this.islandID = 0;
         bypassing = false;
         islandChat = false;
         spyingIslandsChat = false;
         flying = false;
-        IridiumSkyblock.getIslandManager().users.put(this.player, this);
     }
 
     public Island getIsland() {
@@ -66,17 +69,17 @@ public class User {
         return IridiumSkyblock.getMessages().createCooldown.replace("%days%", day + "").replace("%hours%", hours + "").replace("%minutes%", minute + "").replace("%seconds%", second + "").replace("%prefix%", IridiumSkyblock.getConfiguration().prefix);
     }
 
-    public static User getUser(String p) {
-        if (IridiumSkyblock.getIslandManager().users == null)
-            IridiumSkyblock.getIslandManager().users = new HashMap<>();
-        return IridiumSkyblock.getIslandManager().users.get(p);
+    public static User getUser(UUID uuid) {
+        return UserManager.getUser(uuid);
+    }
+
+    public static User getUser(String uuid) {
+        return getUser(UUID.fromString(uuid));
     }
 
     public static User getUser(OfflinePlayer p) {
         if (p == null) return null;
-        if (IridiumSkyblock.getIslandManager().users == null)
-            IridiumSkyblock.getIslandManager().users = new HashMap<>();
-        return IridiumSkyblock.getIslandManager().users.containsKey(p.getUniqueId().toString()) ? IridiumSkyblock.getIslandManager().users.get(p.getUniqueId().toString()) : new User(p);
+        return UserManager.getUser(p.getUniqueId());
     }
 
     public List<Object> getHolograms() {
@@ -97,5 +100,9 @@ public class User {
     public void clearHolograms() {
         if (holograms == null) holograms = new ArrayList<>();
         holograms.clear();
+    }
+
+    public void save() {
+        UserManager.saveUser(this);
     }
 }

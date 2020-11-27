@@ -9,6 +9,8 @@ import com.iridium.iridiumskyblock.configs.*;
 import com.iridium.iridiumskyblock.gui.*;
 import com.iridium.iridiumskyblock.listeners.*;
 import com.iridium.iridiumskyblock.managers.IslandManager;
+import com.iridium.iridiumskyblock.managers.SQLManager;
+import com.iridium.iridiumskyblock.managers.UserManager;
 import com.iridium.iridiumskyblock.nms.NMS;
 import com.iridium.iridiumskyblock.placeholders.ClipPlaceholderAPIManager;
 import com.iridium.iridiumskyblock.placeholders.MVDWPlaceholderAPIManager;
@@ -42,6 +44,8 @@ import java.util.*;
 
 public class IridiumSkyblock extends JavaPlugin {
 
+    @Getter
+    public static SQL sql;
     @Getter
     public static Config configuration;
     @Getter
@@ -86,6 +90,8 @@ public class IridiumSkyblock extends JavaPlugin {
 
     @Getter
     public static IslandManager islandManager;
+    @Getter
+    public static SQLManager sqlManager;
     @Getter
     private static CommandManager commandManager;
     public List<String> languages = new ArrayList<>();
@@ -154,8 +160,7 @@ public class IridiumSkyblock extends JavaPlugin {
             startCounting();
             getLanguages();
             Bukkit.getScheduler().runTask(this, () -> { // Call this a tick later to ensure all worlds are loaded
-                loadIslandManager();
-                if (islandManager == null) return;
+                loadManagers();
 
                 if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) registerMultiverse();
 
@@ -214,9 +219,11 @@ public class IridiumSkyblock extends JavaPlugin {
 
                 if (Bukkit.getPluginManager().isPluginEnabled("WildStacker")) spawnerSupport = new Wildstacker();
                 if (Bukkit.getPluginManager().isPluginEnabled("MergedSpawner")) spawnerSupport = new MergedSpawners();
-                if (Bukkit.getPluginManager().isPluginEnabled("UltimateStacker")) spawnerSupport = new UltimateStacker();
+                if (Bukkit.getPluginManager().isPluginEnabled("UltimateStacker"))
+                    spawnerSupport = new UltimateStacker();
                 if (Bukkit.getPluginManager().isPluginEnabled("EpicSpawners")) spawnerSupport = new EpicSpawners();
-                if (Bukkit.getPluginManager().isPluginEnabled("AdvancedSpawners")) spawnerSupport = new AdvancedSpawners();
+                if (Bukkit.getPluginManager().isPluginEnabled("AdvancedSpawners"))
+                    spawnerSupport = new AdvancedSpawners();
                 if (Bukkit.getPluginManager().isPluginEnabled("RoseStacker")) spawnerSupport = new RoseStacker();
                 if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
                     registerListeners(new ExpansionUnregisterListener());
@@ -483,7 +490,7 @@ public class IridiumSkyblock extends JavaPlugin {
                             island.resetMissions();
                         }
                     }
-                    for (User user : islandManager.users.values()) {
+                    for (User user : UserManager.cache.values()) {
                         user.tookInterestMessage = false;
                     }
                     for (Island island : islandManager.islands.values()) {
@@ -604,6 +611,14 @@ public class IridiumSkyblock extends JavaPlugin {
         }
     }
 
+    public void loadManagers(){
+        loadIslandManager();
+        if (islandManager == null) return;
+        sqlManager = new SQLManager();
+        sqlManager.setupConnection();
+        sqlManager.createTables();
+    }
+
     public void loadIslandManager() {
         islandManager = persist.getFile(IslandManager.class).exists() ? persist.load(IslandManager.class) : new IslandManager();
 
@@ -626,6 +641,7 @@ public class IridiumSkyblock extends JavaPlugin {
 
     public boolean loadConfigs() {
         configuration = persist.getFile(Config.class).exists() ? persist.load(Config.class) : new Config();
+        sql = persist.getFile(SQL.class).exists() ? persist.load(SQL.class) : new SQL();
         missions = persist.getFile(Missions.class).exists() ? persist.load(Missions.class) : new Missions();
         messages = persist.getFile(Messages.class).exists() ? persist.load(Messages.class) : new Messages();
         upgrades = persist.getFile(Upgrades.class).exists() ? persist.load(Upgrades.class) : new Upgrades();
@@ -779,11 +795,15 @@ public class IridiumSkyblock extends JavaPlugin {
 
     public void saveData() {
         if (islandManager != null) persist.save(islandManager);
+        for(User user : UserManager.cache.values()){
+            user.save();
+        }
     }
 
     public void saveConfigs() {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             if (configuration != null) persist.save(configuration);
+            if (sql != null) persist.save(sql);
             if (missions != null) persist.save(missions);
             if (messages != null) persist.save(messages);
             if (upgrades != null) persist.save(upgrades);

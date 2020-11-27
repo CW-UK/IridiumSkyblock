@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.serializer.typeadapter.*;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.Inventory;
@@ -18,7 +19,7 @@ import java.util.Date;
 
 public class Persist {
 
-
+    @Getter
     private final Gson gson = buildGson().create();
 
     public static String getName(Class<?> clazz) {
