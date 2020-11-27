@@ -60,6 +60,9 @@ public class SQLManager {
             connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS islands "
                     + "(id INTEGER, json TEXT, PRIMARY KEY (id));");
 
+            connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS islandmanager "
+                    + "(nextID INTEGER, length INTEGER, current INTEGER, x DOUBLE, y DOUBLE, direction VARCHAR(10));");
+
             connection.close();
 
         } catch (SQLException ex) {

@@ -24,13 +24,13 @@ public class IslandManager {
 
     public static transient Integer id = 0;
 
-    public static int length = 1;
-    public static int current = 0;
+    public static int length;
+    public static int current;
 
-    public static Direction direction = Direction.NORTH;
+    public static Direction direction;
     public static Location nextLocation;
 
-    public static int nextID = 1;
+    public static int nextID;
 
     public static World getWorld() {
         return Bukkit.getWorld(IridiumSkyblock.getConfiguration().worldName);
@@ -116,9 +116,9 @@ public class IslandManager {
             }
         }
 
-        IridiumSkyblock.getInstance().saveData();
-
         nextID++;
+
+        IridiumSkyblock.getInstance().saveData();
     }
 
     public static int purgeIslands(int days, CommandSender sender) {

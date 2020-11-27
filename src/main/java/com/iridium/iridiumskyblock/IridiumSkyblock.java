@@ -38,6 +38,10 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -561,6 +565,36 @@ public class IridiumSkyblock extends JavaPlugin {
             legacyIslandManager.moveToSQL();
             persist.getFile("IslandManager").delete();
         }
+        try {
+            Connection connection = getSqlManager().getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM islandmanager;");
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                IslandManager.nextID = resultSet.getInt("nextID");
+                IslandManager.length = resultSet.getInt("length");
+                IslandManager.current = resultSet.getInt("current");
+                IslandManager.direction = Direction.valueOf(resultSet.getString("direction"));
+                IslandManager.nextLocation = new Location(IslandManager.getWorld(), resultSet.getDouble("x"), 0, resultSet.getDouble("y"));
+            } else {
+                IslandManager.nextID = 1;
+                IslandManager.length = 1;
+                IslandManager.current = 0;
+                IslandManager.direction = Direction.NORTH;
+                IslandManager.nextLocation = new Location(IslandManager.getWorld(), 0, 0, 0);
+                PreparedStatement insert = connection.prepareStatement("INSERT INTO islandmanager (nextID,length,current,direction,x,y)VALUES (?,?,?,?,?,?);");
+                insert.setInt(1, IslandManager.nextID);
+                insert.setInt(2, IslandManager.length);
+                insert.setInt(3, IslandManager.current);
+                insert.setString(4, IslandManager.direction.name());
+                insert.setDouble(5, IslandManager.nextLocation.getX());
+                insert.setDouble(6, IslandManager.nextLocation.getZ());
+                insert.executeUpdate();
+            }
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         IslandManager.getWorld().getWorldBorder().setSize(Double.MAX_VALUE);
         if (configuration.netherIslands) IslandManager.getNetherWorld().getWorldBorder().setSize(Double.MAX_VALUE);
     }
@@ -724,6 +758,20 @@ public class IridiumSkyblock extends JavaPlugin {
 
         for (Island island : IslandManager.cache.values()) {
             island.save();
+        }
+        try {
+            Connection connection = getSqlManager().getConnection();
+            PreparedStatement insert = connection.prepareStatement("UPDATE islandmanager SET nextID = ?, length=?, current=?, direction=?, x=?,y=?;");
+            insert.setInt(1, IslandManager.nextID);
+            insert.setInt(2, IslandManager.length);
+            insert.setInt(3, IslandManager.current);
+            insert.setString(4, IslandManager.direction.name());
+            insert.setDouble(5, IslandManager.nextLocation.getX());
+            insert.setDouble(6, IslandManager.nextLocation.getZ());
+            insert.executeUpdate();
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
