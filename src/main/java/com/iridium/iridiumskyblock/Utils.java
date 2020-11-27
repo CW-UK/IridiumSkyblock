@@ -516,8 +516,7 @@ public class Utils {
     }
 
     public static boolean hasOpenSlot(Inventory inv) {
-        if (inv.firstEmpty() == -1) return false;
-        return true;
+        return (inv.firstEmpty() == -1) ? false : true;
     }
 
     public static XMaterial getXMaterialFromId(int id, byte data) {
