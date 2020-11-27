@@ -21,8 +21,8 @@ public class MissionsGUI extends GUI implements Listener {
     public void addContent() {
         super.addContent();
         if (getInventory().getViewers().isEmpty()) return;
-        if (IridiumSkyblock.getIslandManager().islands.containsKey(islandID)) {
-            Island island = IridiumSkyblock.getIslandManager().islands.get(islandID);
+        if (getIsland()!=null) {
+            Island island = getIsland();
             for (Missions.Mission mission : IridiumSkyblock.getMissions().missions) {
                 List<Utils.Placeholder> placeholderList = Utils.getIslandPlaceholders(island);
 

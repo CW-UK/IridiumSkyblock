@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class IridiumSkyblock extends JavaPlugin {
 
@@ -486,14 +487,14 @@ public class IridiumSkyblock extends JavaPlugin {
                 if (islandManager != null) {
                     LocalDateTime ldt = LocalDateTime.now();
                     if (ldt.getDayOfWeek().equals(DayOfWeek.MONDAY) && getConfiguration().missionRestart.equals(MissionRestart.Weekly) || getConfiguration().missionRestart.equals(MissionRestart.Daily)) {
-                        for (Island island : islandManager.islands.values()) {
+                        for (Island island : islandManager.getLoadedIslands()) {
                             island.resetMissions();
                         }
                     }
                     for (User user : UserManager.cache.values()) {
                         user.tookInterestMessage = false;
                     }
-                    for (Island island : islandManager.islands.values()) {
+                    for (Island island : islandManager.getLoadedIslands()) {
                         double cm = island.money;
                         int cc = island.getCrystals();
                         int ce = island.exp;
@@ -525,12 +526,12 @@ public class IridiumSkyblock extends JavaPlugin {
     public void islandValueManager() {
         //Loop through all online islands and make sure Island#valuableBlocks is accurate
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            ListIterator<Integer> islands = new ArrayList<>(islandManager.islands.keySet()).listIterator();
+            ListIterator<Integer> islands = getIslandManager().getLoadedIslands().stream().map(Island::getId).collect(Collectors.toList()).listIterator();
 
             @Override
             public void run() {
                 if (!islands.hasNext()) {
-                    islands = new ArrayList<>(islandManager.islands.keySet()).listIterator();
+                    islands = getIslandManager().getLoadedIslands().stream().map(Island::getId).collect(Collectors.toList()).listIterator();
                 }
                 if (islands.hasNext()) {
                     int id = islands.next();
@@ -623,7 +624,7 @@ public class IridiumSkyblock extends JavaPlugin {
         if (islandManager == null) return;
         islandManager.moveToSQL();
 
-        for (Island island : islandManager.islands.values()) {
+        for (Island island : islandManager.getLoadedIslands()) {
             island.init();
             if (island.getName().length() > configuration.maxIslandName) {
                 island.setName(island.getName().substring(0, configuration.maxIslandName));
@@ -757,7 +758,7 @@ public class IridiumSkyblock extends JavaPlugin {
             getConfiguration().distance = max + 1;
         }
         if (islandManager != null) {
-            for (Island island : islandManager.islands.values()) {
+            for (Island island : islandManager.getLoadedIslands()) {
                 if (island.getIslandMenuGUI() != null) island.getIslandMenuGUI().getInventory().clear();
                 if (island.getSchematicSelectGUI() != null) island.getSchematicSelectGUI().getInventory().clear();
                 if (island.getBankGUI() != null) island.getBankGUI().getInventory().clear();

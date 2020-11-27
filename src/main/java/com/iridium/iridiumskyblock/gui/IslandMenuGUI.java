@@ -21,7 +21,7 @@ public class IslandMenuGUI extends GUI implements Listener {
     public void addContent() {
         super.addContent();
         if (getInventory().getViewers().isEmpty()) return;
-        if (IridiumSkyblock.getIslandManager().islands.containsKey(islandID)) {
+        if (getIsland()!=null) {
             for(Inventories.Item item : IridiumSkyblock.getInventories().menu.keySet()){
                 setItem(item.slot, Utils.makeItemHidden(item, getIsland()));
             }

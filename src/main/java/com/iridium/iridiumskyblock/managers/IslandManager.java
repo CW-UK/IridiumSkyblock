@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class IslandManager {
 
-    public Map<Integer, Island> islands = new HashMap<>();
-    public Map<List<Integer>, Set<Integer>> islandCache = null;
+    private Map<Integer, Island> islands = new HashMap<>();
+    private Map<List<Integer>, Set<Integer>> islandCache = null;
     private Map<String, User> users = null;
 
     public transient Integer id = 0;
@@ -178,6 +178,10 @@ public class IslandManager {
         wc.createWorld();
     }
 
+    public List<Island> getLoadedIslands() {
+        return new ArrayList<>(islands.values());
+    }
+
     public Island getIslandViaLocation(Location location) {
         if (location == null) return null;
         if (!isIslandWorld(location)) return null;
@@ -205,7 +209,7 @@ public class IslandManager {
     }
 
     public Island getIslandViaId(int i) {
-        return islands.get(i);
+        return islands.getOrDefault(i, null);
     }
 
     public boolean isIslandWorld(Location location) {

@@ -32,7 +32,7 @@ public class PurgeCommand extends Command {
             return;
         }
         IridiumSkyblock.getIslandManager().purgeIslands(days, sender);
-        int total = IridiumSkyblock.getIslandManager().islands.size();
+        int total = IridiumSkyblock.getIslandManager().getLoadedIslands().size();
         double totalSeconds = total * 30;
         int minutes = (int) Math.floor(totalSeconds / 60.00);
         double seconds = (int) (totalSeconds - (minutes * 60));
