@@ -146,7 +146,6 @@ public class IslandManager {
             }
         }
         return true;
-        }, 0, 20 * 30);
     }
 
     public void moveToSQL() {
