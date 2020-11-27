@@ -18,6 +18,7 @@ public class IslandManager {
 
     public Map<Integer, Island> islands = new HashMap<>();
     public Map<List<Integer>, Set<Integer>> islandCache = new HashMap<>();
+    private Map<String, User> users = new HashMap<>();
 
     public transient Integer id = 0;
 
@@ -143,6 +144,15 @@ public class IslandManager {
                 }
             }
         }, 0, 20 * 30);
+    }
+
+    public void moveUsersToSQL(){
+        if(users != null){
+            for(String uuid : users.keySet()){
+                UserManager.cache.put(UUID.fromString(uuid), users.get(uuid));
+            }
+            users = null;
+        }
     }
 
     private void makeWorld() {

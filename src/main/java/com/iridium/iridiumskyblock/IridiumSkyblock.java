@@ -611,7 +611,7 @@ public class IridiumSkyblock extends JavaPlugin {
         }
     }
 
-    public void loadManagers(){
+    public void loadManagers() {
         loadIslandManager();
         if (islandManager == null) return;
         sqlManager = new SQLManager();
@@ -623,6 +623,7 @@ public class IridiumSkyblock extends JavaPlugin {
         islandManager = persist.getFile(IslandManager.class).exists() ? persist.load(IslandManager.class) : new IslandManager();
 
         if (islandManager == null) return;
+        islandManager.moveUsersToSQL();
 
         for (Island island : islandManager.islands.values()) {
             island.init();
@@ -795,7 +796,7 @@ public class IridiumSkyblock extends JavaPlugin {
 
     public void saveData() {
         if (islandManager != null) persist.save(islandManager);
-        for(User user : UserManager.cache.values()){
+        for (User user : UserManager.cache.values()) {
             user.save();
         }
     }
