@@ -1,6 +1,7 @@
 package com.iridium.iridiumskyblock.managers;
 
 import com.iridium.iridiumskyblock.Direction;
+import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
 import org.bukkit.Location;
@@ -41,5 +42,16 @@ public class LegacyIslandManager {
             }
             islandCache = null;
         }
+        if (islands != null) {
+            for (Island island : islands.values()) {
+                island.save();
+            }
+        }
+        IslandManager.length = length;
+        IslandManager.current = current;
+        IslandManager.direction = direction;
+        IslandManager.nextID = nextID;
+        IslandManager.nextLocation = nextLocation;
+        IridiumSkyblock.getInstance().saveData();
     }
 }
