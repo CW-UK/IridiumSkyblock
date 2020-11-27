@@ -59,7 +59,6 @@ public class UserManager {
             PreparedStatement insert = connection.prepareStatement("UPDATE users SET json = ? WHERE UUID = ?;");
             insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(user));
             insert.setString(2, user.player);
-            IridiumSkyblock.getInstance().getLogger().info("" + insert.executeUpdate());
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
