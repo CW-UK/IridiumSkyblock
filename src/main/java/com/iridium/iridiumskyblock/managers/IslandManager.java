@@ -255,6 +255,7 @@ public class IslandManager {
             PreparedStatement insert = connection.prepareStatement("UPDATE islands SET json = ? WHERE id = ?;");
             insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(island));
             insert.setInt(2, island.getId());
+            insert.executeUpdate();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
