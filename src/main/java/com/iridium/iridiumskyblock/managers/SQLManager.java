@@ -49,8 +49,15 @@ public class SQLManager {
 
     public void createTables() {
         try {
-            getConnection().createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS users "
+            Connection connection = getConnection();
+            connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS users "
                     + "(UUID VARCHAR(255), json TEXT, PRIMARY KEY (UUID));");
+
+
+            connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS claims "
+                    + "(x INTEGER, z INTEGER, island INTEGER);");
+
+            connection.close();
 
         } catch (SQLException ex) {
             IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "SQLite exception on Creating Tables", ex);

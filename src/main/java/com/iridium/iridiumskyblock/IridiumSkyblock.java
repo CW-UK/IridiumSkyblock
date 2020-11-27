@@ -612,17 +612,16 @@ public class IridiumSkyblock extends JavaPlugin {
     }
 
     public void loadManagers() {
-        loadIslandManager();
-        if (islandManager == null) return;
         sqlManager = new SQLManager();
         sqlManager.createTables();
+        loadIslandManager();
     }
 
     public void loadIslandManager() {
         islandManager = persist.getFile(IslandManager.class).exists() ? persist.load(IslandManager.class) : new IslandManager();
 
         if (islandManager == null) return;
-        islandManager.moveUsersToSQL();
+        islandManager.moveToSQL();
 
         for (Island island : islandManager.islands.values()) {
             island.init();

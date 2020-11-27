@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 public class IslandManager {
 
     public Map<Integer, Island> islands = new HashMap<>();
-    public Map<List<Integer>, Set<Integer>> islandCache = new HashMap<>();
-    private Map<String, User> users = new HashMap<>();
+    public Map<List<Integer>, Set<Integer>> islandCache = null;
+    private Map<String, User> users = null;
 
     public transient Integer id = 0;
 
@@ -146,12 +146,20 @@ public class IslandManager {
         }, 0, 20 * 30);
     }
 
-    public void moveUsersToSQL(){
-        if(users != null){
-            for(String uuid : users.keySet()){
+    public void moveToSQL() {
+        if (users != null) {
+            for (String uuid : users.keySet()) {
                 UserManager.cache.put(UUID.fromString(uuid), users.get(uuid));
             }
             users = null;
+        }
+        if (islandCache != null) {
+            for (List<Integer> coords : islandCache.keySet()) {
+                for (int id : islandCache.get(coords)) {
+                    ClaimManager.addClaim(coords.get(0), coords.get(1), id);
+                }
+            }
+            islandCache = null;
         }
     }
 
@@ -175,17 +183,11 @@ public class IslandManager {
         if (!isIslandWorld(location)) return null;
 
         final Chunk chunk = location.getChunk();
-        final List<Integer> chunkKey = Collections.unmodifiableList(Arrays.asList(chunk.getX(), chunk.getZ()));
 
         final double x = location.getX();
         final double z = location.getZ();
 
-        final Set<Integer> islandIds = islandCache.computeIfAbsent(chunkKey, (hash) -> islands
-                .values()
-                .stream()
-                .filter(island -> island.isInIsland(x, z))
-                .map(Island::getId)
-                .collect(Collectors.toSet()));
+        final Set<Integer> islandIds = ClaimManager.getIslands(chunk.getX(), chunk.getZ());
 
         for (int id : islandIds) {
             final Island island = islands.get(id);
@@ -195,7 +197,7 @@ public class IslandManager {
 
         for (Island island : islands.values()) {
             if (!island.isInIsland(x, z)) continue;
-            islandIds.add(island.getId());
+            ClaimManager.addClaim(chunk.getX(), chunk.getZ(), island.getId());
             return island;
         }
 
@@ -225,7 +227,6 @@ public class IslandManager {
     public void removeIsland(Island island) {
         final int id = island.getId();
         islands.remove(id);
-        islandCache
-                .forEach((key, value) -> value.remove(id));
+        ClaimManager.removeClaims(island.getId());
     }
 }
