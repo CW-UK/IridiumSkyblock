@@ -427,11 +427,12 @@ public class Utils {
             }
         }
         if (IridiumSkyblock.getInstance().getEconomy() != null) {
-            if (IridiumSkyblock.getInstance().getEconomy().getBalance(p) >= vault && crystals == 0) {
+            if (IridiumSkyblock.getInstance().getEconomy().getBalance(p) >= vault) {
                 IridiumSkyblock.getInstance().getEconomy().withdrawPlayer(p, vault);
-                TransactionLogger.saveTransaction(p, new Transaction().add(TransactionType.MONEY, -vault));
+                TransactionLogger.saveTransaction(p, new Transaction().add(TransactionType.MONEY, -vault).add(TransactionType.CRYSTALS, -crystals));
                 return BuyResponce.SUCCESS;
             }
+            return BuyResponce.NOT_ENOUGH_VAULT;
         }
         return crystals == 0 ? BuyResponce.NOT_ENOUGH_VAULT : BuyResponce.NOT_ENOUGH_CRYSTALS;
     }
@@ -515,14 +516,8 @@ public class Utils {
     }
 
     public static boolean hasOpenSlot(Inventory inv) {
-        for (ItemStack item : inv.getContents()) {
-            if (item == null) {
-                return true;
-            } else if (item.getType() == Material.AIR) {
-                return true;
-            }
-        }
-        return false;
+        if (inv.firstEmpty() == -1) return false;
+        return true;
     }
 
     public static XMaterial getXMaterialFromId(int id, byte data) {
