@@ -11,9 +11,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class SQLManager {
-    private Connection connection;
-
-    public void setupConnection() {
+    private Connection setupConnection() {
         final SQL sql = IridiumSkyblock.getSql();
         //Check if we need to use SQL or SQLLite
         if (sql.username.isEmpty()) {
@@ -29,7 +27,7 @@ public class SQLManager {
             }
             try {
                 Class.forName("org.sqlite.JDBC");
-                connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
+                return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
             } catch (SQLException ex) {
                 IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "SQL exception on initialize", ex);
             } catch (ClassNotFoundException ex) {
@@ -39,18 +37,19 @@ public class SQLManager {
             //Use SQL
             try {
                 Class.forName("com.mysql.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://" + sql.host + ":" + sql.port + "/" + sql.database, sql.username, sql.password);
+                return DriverManager.getConnection("jdbc:mysql://" + sql.host + ":" + sql.port + "/" + sql.database, sql.username, sql.password);
             } catch (SQLException ex) {
                 IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "SQLite exception on initialize", ex);
             } catch (ClassNotFoundException ex) {
                 IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "Could not find SQL library");
             }
         }
+        return null;
     }
 
     public void createTables() {
         try {
-            connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS users "
+            getConnection().createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS users "
                     + "(UUID VARCHAR(255), json TEXT, PRIMARY KEY (UUID));");
 
         } catch (SQLException ex) {
@@ -59,6 +58,6 @@ public class SQLManager {
     }
 
     public Connection getConnection() {
-        return connection;
+        return setupConnection();
     }
 }

@@ -615,7 +615,6 @@ public class IridiumSkyblock extends JavaPlugin {
         loadIslandManager();
         if (islandManager == null) return;
         sqlManager = new SQLManager();
-        sqlManager.setupConnection();
         sqlManager.createTables();
     }
 
