@@ -25,8 +25,7 @@ public class PlayerInteractListener implements Listener {
         try {
             final Player player = event.getPlayer();
             final Location playerLocation = player.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            if (!islandManager.isIslandWorld(playerLocation)) return;
+            if (!IslandManager.isIslandWorld(playerLocation)) return;
 
             final User user = User.getUser(player);
             final Block block = event.getClickedBlock();
@@ -44,7 +43,7 @@ public class PlayerInteractListener implements Listener {
 
             if (block != null) {
                 final Location location = block.getLocation();
-                final Island island = islandManager.getIslandViaLocation(location);
+                final Island island = IslandManager.getIslandViaLocation(location);
                 if (island != null) {
                     if (!island.getPermissions(user).interact) {
                         event.setCancelled(true);
@@ -74,7 +73,7 @@ public class PlayerInteractListener implements Listener {
             final User user = User.getUser(player);
             final Entity rightClicked = event.getRightClicked();
             final Location location = rightClicked.getLocation();
-            final Island island = IridiumSkyblock.getIslandManager().getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
             if (!island.getPermissions(user).interact) event.setCancelled(true);
         } catch (Exception e) {
@@ -89,7 +88,7 @@ public class PlayerInteractListener implements Listener {
             final User user = User.getUser(player);
             final Entity rightClicked = event.getRightClicked();
             final Location location = rightClicked.getLocation();
-            final Island island = IridiumSkyblock.getIslandManager().getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
             if (!island.getPermissions(user).interact) event.setCancelled(true);
         } catch (Exception e) {

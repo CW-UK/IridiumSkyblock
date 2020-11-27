@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
 import com.iridium.iridiumskyblock.configs.Schematics;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -127,7 +128,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                             u.getIsland().teleportHome(p);
                         }
                     } else {
-                        IridiumSkyblock.getIslandManager().createIsland(p);
+                        IslandManager.createIsland(p);
                     }
                     return true;
                 }

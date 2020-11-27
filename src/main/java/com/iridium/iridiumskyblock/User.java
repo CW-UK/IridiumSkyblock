@@ -1,5 +1,6 @@
 package com.iridium.iridiumskyblock;
 
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import com.iridium.iridiumskyblock.managers.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -38,7 +39,7 @@ public class User {
     }
 
     public Island getIsland() {
-        return IridiumSkyblock.getIslandManager().getIslandViaId(islandID);
+        return IslandManager.getIslandViaId(islandID);
     }
 
     public Role getRole() {

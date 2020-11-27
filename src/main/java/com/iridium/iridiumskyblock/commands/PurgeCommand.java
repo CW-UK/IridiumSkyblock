@@ -3,6 +3,7 @@ package com.iridium.iridiumskyblock.commands;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.Arrays;
@@ -27,11 +28,11 @@ public class PurgeCommand extends Command {
             sender.sendMessage(Utils.color(IridiumSkyblock.getMessages().notNumber.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
             return;
         }
-        if (IridiumSkyblock.getIslandManager().id != 0) {
+        if (IslandManager.id != 0) {
             sender.sendMessage(Utils.color(IridiumSkyblock.getMessages().calculationAlreadyInProcess.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
             return;
         }
-        int total = IridiumSkyblock.getIslandManager().purgeIslands(days, sender);
+        int total = IslandManager.purgeIslands(days, sender);
         double totalSeconds = total * 5;
         int minutes = (int) Math.floor(totalSeconds / 60.00);
         double seconds = (int) (totalSeconds - (minutes * 60));

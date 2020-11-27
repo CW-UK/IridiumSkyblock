@@ -26,8 +26,7 @@ public class EntityDamageByEntityListener implements Listener {
         final Player player = (Player) damagee;
         final User user = User.getUser(player);
         final Location damageeLocation = damagee.getLocation();
-        final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-        final Island island = islandManager.getIslandViaLocation(damageeLocation);
+        final Island island = IslandManager.getIslandViaLocation(damageeLocation);
         if (island == null) return;
 
         if (event.getCause() == EntityDamageEvent.DamageCause.VOID) return;
@@ -44,8 +43,7 @@ public class EntityDamageByEntityListener implements Listener {
         try {
             final Entity damagee = event.getEntity();
             final Location damageeLocation = damagee.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(damageeLocation);
+            final Island island = IslandManager.getIslandViaLocation(damageeLocation);
             if (island == null) return;
 
             final Entity damager = event.getDamager();
@@ -148,8 +146,7 @@ public class EntityDamageByEntityListener implements Listener {
         try {
             final Vehicle vehicle = event.getVehicle();
             final Location location = vehicle.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             final Entity attacker = event.getAttacker();
@@ -170,9 +167,8 @@ public class EntityDamageByEntityListener implements Listener {
         if (event.getRemover() instanceof Egg && event.getEntity() instanceof ItemFrame) {
             Entity entity = event.getEntity();
             Location location = entity.getLocation();
-            IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            if (!islandManager.isIslandWorld(location)) return;
-            Island island = islandManager.getIslandViaLocation(location);
+            if (!IslandManager.isIslandWorld(location)) return;
+            Island island = IslandManager.getIslandViaLocation(location);
             Player player = (Player) ((Egg) event.getRemover()).getShooter();
             User user = User.getUser(player);
             if (player != null && island != null && !island.getMembers().contains(player.getUniqueId().toString()) && !island.isCoop(user.getIsland())) {

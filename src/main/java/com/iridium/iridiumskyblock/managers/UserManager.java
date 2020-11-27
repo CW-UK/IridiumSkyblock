@@ -55,7 +55,6 @@ public class UserManager {
     public static void saveUser(User user) {
         try {
             Connection connection = IridiumSkyblock.getSqlManager().getConnection();
-            IridiumSkyblock.getInstance().getLogger().info("Saving user: " + user.name);
             PreparedStatement insert = connection.prepareStatement("UPDATE users SET json = ? WHERE UUID = ?;");
             insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(user));
             insert.setString(2, user.player);

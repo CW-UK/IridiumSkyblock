@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -32,7 +33,7 @@ public class AdminCommand extends Command {
                 return;
             }
             int id = Integer.parseInt(args[1]);
-            island = IridiumSkyblock.getIslandManager().getIslandViaId(id);
+            island = IslandManager.getIslandViaId(id);
             if (island != null) {
                 for (com.iridium.iridiumskyblock.commands.Command command : IridiumSkyblock.getCommandManager().commands) {
                     if (command.getAliases().contains(args[2]) && command.isEnabled()) {

@@ -30,7 +30,6 @@ public class PlayerJoinLeaveListener implements Listener {
                 }
             }
             final Location location = player.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
             final User user = User.getUser(player);
             if (!user.tookInterestMessage) {
                 Island island = user.getIsland();
@@ -46,13 +45,13 @@ public class PlayerJoinLeaveListener implements Listener {
 
             if (user.getIsland() == null && IridiumSkyblock.getConfiguration().createIslandOnJoin) {
                 if (!user.isOnCooldown() || IridiumSkyblock.getConfiguration().ignoreCooldownOnJoinCreation) {
-                    islandManager.createIsland(player);
+                    IslandManager.createIsland(player);
                 } else {
                     player.sendMessage(Utils.color(user.getCooldownTimeMessage()));
                 }
             }
 
-            if (!islandManager.isIslandWorld(location)) return;
+            if (!IslandManager.isIslandWorld(location)) return;
 
             if (user.flying && (user.getIsland() == null || user.getIsland().getFlightBooster() == 0)) {
                 player.setAllowFlight(false);
@@ -62,7 +61,7 @@ public class PlayerJoinLeaveListener implements Listener {
             if (IridiumSkyblock.getConfiguration().disableBypassOnJoin || !player.hasPermission(IridiumSkyblock.getCommands().bypassCommand.getPermission()))
                 user.bypassing = false;
 
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> island.sendBorder(player), 1);

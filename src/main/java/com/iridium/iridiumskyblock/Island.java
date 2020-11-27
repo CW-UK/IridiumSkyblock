@@ -264,7 +264,6 @@ public class Island {
 
     public void initBlocks() {
         final IridiumSkyblock plugin = IridiumSkyblock.getInstance();
-        final IslandManager manager = IridiumSkyblock.getIslandManager();
         final boolean nether = IridiumSkyblock.getConfiguration().netherIslands;
 
         int minx = pos1.getChunk().getX();
@@ -295,7 +294,7 @@ public class Island {
                 //Update the nether world values
 
                 if (nether) {
-                    Chunk netherchunk = manager.getNetherWorld().getChunkAt(x, z);
+                    Chunk netherchunk = IslandManager.getNetherWorld().getChunkAt(x, z);
                     ChunkSnapshot nethersnapshot = netherchunk.getChunkSnapshot(true, false, false);
 
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -331,7 +330,7 @@ public class Island {
 
                 //Update overworld values
 
-                Chunk chunk = manager.getWorld().getChunkAt(x, z);
+                Chunk chunk = IslandManager.getWorld().getChunkAt(x, z);
                 ChunkSnapshot snapshot = chunk.getChunkSnapshot(true, false, false);
 
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -446,11 +445,11 @@ public class Island {
         double size = IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size;
         if (size % 2 == 0) size++;
         String worldname = p.getLocation().getWorld().getName();
-        if (worldname.equals(IridiumSkyblock.getIslandManager().getWorld().getName())) {
+        if (worldname.equals(IslandManager.getWorld().getName())) {
             IridiumSkyblock.nms.sendWorldBorder(p, borderColor, size, getCenter());
-        } else if (IridiumSkyblock.getConfiguration().netherIslands && worldname.equals(IridiumSkyblock.getIslandManager().getNetherWorld().getName())) {
+        } else if (IridiumSkyblock.getConfiguration().netherIslands && worldname.equals(IslandManager.getNetherWorld().getName())) {
             Location loc = getCenter().clone();
-            loc.setWorld(IridiumSkyblock.getIslandManager().getNetherWorld());
+            loc.setWorld(IslandManager.getNetherWorld());
             IridiumSkyblock.nms.sendWorldBorder(p, borderColor, size, loc);
         }
     }
@@ -536,14 +535,13 @@ public class Island {
         }
 
         final Config config = IridiumSkyblock.getConfiguration();
-        final IslandManager islandManager = IridiumSkyblock.getIslandManager();
 
         final Set<World> worlds = new HashSet<>();
-        final World islandWorld = islandManager.getWorld();
+        final World islandWorld = IslandManager.getWorld();
         worlds.add(islandWorld);
 
         if (config.netherIslands) {
-            final World netherIslandWorld = islandManager.getNetherWorld();
+            final World netherIslandWorld = IslandManager.getNetherWorld();
             worlds.add(netherIslandWorld);
         }
 
@@ -776,7 +774,7 @@ public class Island {
         //Reset island home
         for (Schematics.FakeSchematic schematic : IridiumSkyblock.getSchematics().schematics) {
             if (!schematic.name.equals(this.schematic)) continue;
-            home = new Location(IridiumSkyblock.getIslandManager().getWorld(), getCenter().getX() + schematic.x, schematic.y, getCenter().getZ() + schematic.z);
+            home = new Location(IslandManager.getWorld(), getCenter().getX() + schematic.x, schematic.y, getCenter().getZ() + schematic.z);
             this.setBiome(schematic.biome);
         }
     }
@@ -798,7 +796,7 @@ public class Island {
             IridiumSkyblock.worldEdit.paste(new File(IridiumSkyblock.schematicFolder, schematic), getCenter().clone().add(fakeSchematic.xOffset, fakeSchematic.yOffset, fakeSchematic.zOffset), this);
             Location center = getCenter().clone();
             if (IridiumSkyblock.getConfiguration().netherIslands) {
-                center.setWorld(IridiumSkyblock.getIslandManager().getNetherWorld());
+                center.setWorld(IslandManager.getNetherWorld());
                 IridiumSkyblock.worldEdit.paste(new File(IridiumSkyblock.schematicFolder, netherschematic), center.clone().add(fakeSchematic.xNetherOffset, fakeSchematic.yNetherOffset, fakeSchematic.zNetherOffset), this);
             }
         }
@@ -884,7 +882,7 @@ public class Island {
     public void teleportNetherHome(Player p) {
         if (getNetherhome() == null) {
             netherhome = center;
-            netherhome.setWorld(IridiumSkyblock.getIslandManager().getNetherWorld());
+            netherhome.setWorld(IslandManager.getNetherWorld());
         }
         if (User.getUser(p).teleportingHome) {
             return;
@@ -961,9 +959,8 @@ public class Island {
         }
         killEntities();
         deleteBlocks();
-        final IslandManager islandManager = IridiumSkyblock.getIslandManager();
         for (int id : coop) {
-            islandManager.getIslandViaId(id).coop.remove(getId());
+            IslandManager.getIslandViaId(id).coop.remove(getId());
         }
         coop = null;
         hideBorder();
@@ -973,7 +970,7 @@ public class Island {
         this.members = null;
         this.center = null;
         this.home = null;
-        islandManager.removeIsland(this);
+        IslandManager.removeIsland(this);
         this.id = 0;
         IridiumSkyblock.getInstance().saveConfigs();
         Bukkit.getScheduler().cancelTask(boosterid);
@@ -1131,7 +1128,7 @@ public class Island {
 
     public void setBiome(XBiome biome) {
         this.biome = biome;
-        final World world = IridiumSkyblock.getIslandManager().getWorld();
+        final World world = IslandManager.getWorld();
         final List<Chunk> chunks = new ArrayList<Chunk>() {{
             for (int X = getPos1().getChunk().getX(); X <= getPos2().getChunk().getX(); X++) {
                 for (int Z = getPos1().getChunk().getZ(); Z <= getPos2().getChunk().getZ(); Z++) {
@@ -1153,7 +1150,7 @@ public class Island {
     public void setNetherBiome(XBiome biome) {
         if (!IridiumSkyblock.getConfiguration().netherIslands) return;
         this.netherBiome = biome;
-        final World world = IridiumSkyblock.getIslandManager().getNetherWorld();
+        final World world = IslandManager.getNetherWorld();
         Location pos1 = getPos1();
         Location pos2 = getPos2();
         pos1.setWorld(world);
@@ -1175,8 +1172,8 @@ public class Island {
         clearInventories();
         valuableBlocks.clear();
         calculateIslandValue();
-        final World world = IridiumSkyblock.getIslandManager().getWorld();
-        final World nether = IridiumSkyblock.getIslandManager().getNetherWorld();
+        final World world = IslandManager.getWorld();
+        final World nether = IslandManager.getNetherWorld();
         for (int X = getPos1().getBlockX(); X <= getPos2().getBlockX(); X++) {
             for (int Y = 0; Y <= 255; Y++) {
                 for (int Z = getPos1().getBlockZ(); Z <= getPos2().getBlockZ(); Z++) {
@@ -1196,16 +1193,16 @@ public class Island {
     }
 
     public void killEntities() {
-        for (Entity entity : IridiumSkyblock.getIslandManager().getWorld().getNearbyEntities(getCenter(), IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00, 255, IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00)) {
+        for (Entity entity : IslandManager.getWorld().getNearbyEntities(getCenter(), IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00, 255, IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00)) {
             if (!entity.getType().equals(EntityType.PLAYER)) {
                 entity.remove();
             }
         }
         if (IridiumSkyblock.getConfiguration().netherIslands) {
             Location netherCenter = getCenter().clone();
-            netherCenter.setWorld(IridiumSkyblock.getIslandManager().getNetherWorld());
+            netherCenter.setWorld(IslandManager.getNetherWorld());
 
-            for (Entity entity : IridiumSkyblock.getIslandManager().getNetherWorld().getNearbyEntities(netherCenter, IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00, 255, IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00)) {
+            for (Entity entity : IslandManager.getNetherWorld().getNearbyEntities(netherCenter, IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00, 255, IridiumSkyblock.getUpgrades().sizeUpgrade.upgrades.get(sizeLevel).size / 2.00)) {
                 if (!entity.getType().equals(EntityType.PLAYER)) {
                     entity.remove();
                 }
@@ -1225,7 +1222,7 @@ public class Island {
     public Location getNetherhome() {
         if (netherhome == null) {
             netherhome = getHome().clone();
-            netherhome.setWorld(IridiumSkyblock.getIslandManager().getNetherWorld());
+            netherhome.setWorld(IslandManager.getNetherWorld());
         }
         return netherhome;
     }
@@ -1281,5 +1278,9 @@ public class Island {
 
     public String getFormattedCrystals() {
         return Utils.NumberFormatter.format(crystals);
+    }
+
+    public void save(){
+        IslandManager.save(this);
     }
 }

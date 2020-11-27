@@ -22,8 +22,7 @@ public class PlayerFishListener implements Listener {
         try {
             final Player player = event.getPlayer();
             final Location location = player.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            if (!islandManager.isIslandWorld(location)) return;
+            if (!IslandManager.isIslandWorld(location)) return;
 
             if (event.getState() != PlayerFishEvent.State.CAUGHT_FISH) return;
 

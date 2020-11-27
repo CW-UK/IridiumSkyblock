@@ -28,8 +28,7 @@ public class BlockFromToListener implements Listener {
         try {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             final Material material = block.getType();
@@ -37,7 +36,7 @@ public class BlockFromToListener implements Listener {
             final Location toLocation = toBlock.getLocation();
 
             if (material.equals(Material.WATER) || material.equals(Material.LAVA)) {
-                final Island toIsland = islandManager.getIslandViaLocation(toLocation);
+                final Island toIsland = IslandManager.getIslandViaLocation(toLocation);
                 if (island != toIsland)
                     event.setCancelled(true);
             }
@@ -96,8 +95,7 @@ public class BlockFromToListener implements Listener {
         try {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             if (!event.getNewState().getType().equals(Material.OBSIDIAN)) return;

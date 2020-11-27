@@ -1,9 +1,9 @@
 package com.iridium.iridiumskyblock.nms;
 
 import com.iridium.iridiumskyblock.Color;
-import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import net.minecraft.server.v1_9_R1.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -36,7 +36,7 @@ public class v1_9_R1 implements NMS {
         WorldBorder worldBorder = new WorldBorder();
         worldBorder.world = ((CraftWorld) centerLocation.getWorld()).getHandle();
 
-        if (centerLocation.getWorld().equals(IridiumSkyblock.getIslandManager().getNetherWorld())) {
+        if (centerLocation.getWorld().equals(IslandManager.getNetherWorld())) {
             worldBorder.setCenter(8 * (centerLocation.getBlockX() + 0.5), 8 * (centerLocation.getBlockZ() + 0.5));
         } else {
             worldBorder.setCenter(centerLocation.getBlockX() + 0.5, centerLocation.getBlockZ() + 0.5);

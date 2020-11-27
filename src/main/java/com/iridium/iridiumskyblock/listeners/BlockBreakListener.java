@@ -27,8 +27,7 @@ public class BlockBreakListener implements Listener {
             if (event.isCancelled()) return;
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             final Player player = event.getPlayer();
@@ -79,8 +78,7 @@ public class BlockBreakListener implements Listener {
             final Block block = event.getBlock();
             final BlockState blockState = block.getState();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             if (Utils.isBlockValuable(block)) {

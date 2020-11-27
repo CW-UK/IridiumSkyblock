@@ -57,6 +57,9 @@ public class SQLManager {
             connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS claims "
                     + "(x INTEGER, z INTEGER, island INTEGER);");
 
+            connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS islands "
+                    + "(id INTEGER, json TEXT, PRIMARY KEY (id));");
+
             connection.close();
 
         } catch (SQLException ex) {

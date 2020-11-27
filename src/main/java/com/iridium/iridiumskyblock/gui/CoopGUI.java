@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,7 +13,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class CoopGUI extends GUI implements Listener {
         if (island != null) {
             int i = 0;
             for (int id : island.getCoop()) {
-                Island is = IridiumSkyblock.getIslandManager().getIslandViaId(id);
+                Island is = IslandManager.getIslandViaId(id);
                 if (is != null) {
                     islands.put(i, id);
                     User user = User.getUser(is.getOwner());
@@ -60,7 +60,7 @@ public class CoopGUI extends GUI implements Listener {
                 e.getWhoClicked().openInventory(getIsland().getIslandMenuGUI().getInventory());
             }
             if (islands.containsKey(e.getSlot())) {
-                Island island = IridiumSkyblock.getIslandManager().getIslandViaId(islands.get(e.getSlot()));
+                Island island = IslandManager.getIslandViaId(islands.get(e.getSlot()));
                 User u = User.getUser((OfflinePlayer) e.getWhoClicked());
                 if (e.getClick().equals(ClickType.RIGHT)) {
                     if (u.bypassing || u.getIsland().getPermissions(u.getRole()).coop) {

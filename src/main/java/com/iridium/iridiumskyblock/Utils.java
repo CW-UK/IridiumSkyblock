@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.iridium.iridiumskyblock.Utils.TransactionLogger.Transaction;
 import com.iridium.iridiumskyblock.Utils.TransactionLogger.TransactionType;
 import com.iridium.iridiumskyblock.configs.Inventories;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
@@ -242,14 +243,14 @@ public class Utils {
     }
 
     public static List<Island> getTopIslands() {
-        List<Island> islands = IridiumSkyblock.getIslandManager().getLoadedIslands();
+        List<Island> islands = IslandManager.getLoadedIslands();
         islands.sort(Comparator.comparingDouble(Island::getValue));
         Collections.reverse(islands);
         return islands;
     }
 
     public static List<Island> getIslands() {
-        List<Island> islands = IridiumSkyblock.getIslandManager().getLoadedIslands();
+        List<Island> islands = IslandManager.getLoadedIslands();
         islands.sort(Comparator.comparingInt(Island::getVotes));
         Collections.reverse(islands);
         return islands;

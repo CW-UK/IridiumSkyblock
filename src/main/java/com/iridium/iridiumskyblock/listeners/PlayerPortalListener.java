@@ -24,8 +24,7 @@ public class PlayerPortalListener implements Listener {
     public void onPlayerPortal(PlayerPortalEvent event) {
         try {
             final Location fromLocation = event.getFrom().clone();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(fromLocation);
+            final Island island = IslandManager.getIslandViaLocation(fromLocation);
             if (island == null) return;
 
             if (!event.getCause().equals(PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) return;
@@ -78,7 +77,7 @@ public class PlayerPortalListener implements Listener {
             else if (worldName.equals(IridiumSkyblock.getConfiguration().netherWorldName))
                 event.setTo(island.getHome());
             Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> {
-                Island is = IridiumSkyblock.getIslandManager().getIslandViaLocation(player.getLocation());
+                Island is = IslandManager.getIslandViaLocation(player.getLocation());
                 if (is != null) {
                     is.sendBorder(player);
                     is.sendHomograms(player);

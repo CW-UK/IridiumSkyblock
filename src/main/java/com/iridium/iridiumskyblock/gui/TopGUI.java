@@ -5,6 +5,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,7 +63,7 @@ public class TopGUI extends GUI implements Listener {
             }
             if (islands.containsKey(e.getSlot())) {
                 e.getWhoClicked().closeInventory();
-                Island island = IridiumSkyblock.getIslandManager().getIslandViaId(islands.get(e.getSlot()));
+                Island island = IslandManager.getIslandViaId(islands.get(e.getSlot()));
                 if (island.isVisit() || User.getUser((OfflinePlayer) e.getWhoClicked()).bypassing) {
                     island.teleportHome((Player) e.getWhoClicked());
                 } else {

@@ -3,6 +3,7 @@ package com.iridium.iridiumskyblock.gui;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -52,6 +53,6 @@ public abstract class GUI {
     }
 
     public Island getIsland() {
-        return IridiumSkyblock.getIslandManager().getIslandViaId(islandID);
+        return IslandManager.getIslandViaId(islandID);
     }
 }

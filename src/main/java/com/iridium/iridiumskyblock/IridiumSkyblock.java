@@ -9,6 +9,7 @@ import com.iridium.iridiumskyblock.configs.*;
 import com.iridium.iridiumskyblock.gui.*;
 import com.iridium.iridiumskyblock.listeners.*;
 import com.iridium.iridiumskyblock.managers.IslandManager;
+import com.iridium.iridiumskyblock.managers.LegacyIslandManager;
 import com.iridium.iridiumskyblock.managers.SQLManager;
 import com.iridium.iridiumskyblock.managers.UserManager;
 import com.iridium.iridiumskyblock.nms.NMS;
@@ -23,6 +24,7 @@ import com.iridium.iridiumskyblock.support.*;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -36,8 +38,6 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -89,8 +89,6 @@ public class IridiumSkyblock extends JavaPlugin {
     @Getter
     private Economy economy;
 
-    @Getter
-    public static IslandManager islandManager;
     @Getter
     public static SQLManager sqlManager;
     @Getter
@@ -161,6 +159,8 @@ public class IridiumSkyblock extends JavaPlugin {
             startCounting();
             getLanguages();
             Bukkit.getScheduler().runTask(this, () -> { // Call this a tick later to ensure all worlds are loaded
+                IslandManager.makeWorlds();
+                IslandManager.nextLocation = new Location(IslandManager.getWorld(), 0, 0, 0);
                 loadManagers();
 
                 if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) registerMultiverse();
@@ -173,11 +173,6 @@ public class IridiumSkyblock extends JavaPlugin {
                 visitGUI = new HashMap<>();
 
                 registerListeners(new StructureGrowListener(), new EntitySpawnListener(), new BlockPistonListener(), new EntityPickupItemListener(), new PlayerTalkListener(), new ItemCraftListener(), new PlayerTeleportListener(), new PlayerPortalListener(), new BlockBreakListener(), new BlockPlaceListener(), new PlayerInteractListener(), new BlockFromToListener(), new SpawnerSpawnListener(), new EntityDeathListener(), new PlayerJoinLeaveListener(), new BlockGrowListener(), new PlayerTalkListener(), new PlayerMoveListener(), new EntityDamageByEntityListener(), new PlayerExpChangeListener(), new PlayerFishListener(), new EntityExplodeListener(), new PlayerBucketEmptyListener(), new EntityTargetLivingEntityListener());
-
-                Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), this::saveIslandManager, 0, 20 * 60);
-
-                if (configuration.doIslandBackup)
-                    Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), this::backupIslandManager, 0, 20 * 60 * getConfiguration().backupIntervalMinutes);
 
                 Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), this::addPages, 0, 20 * 60);
 
@@ -372,12 +367,12 @@ public class IridiumSkyblock extends JavaPlugin {
     }
 
     private void registerMultiverse() {
-        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + islandManager.getWorld().getName() + " normal -g " + getName());
-        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + getName() + " " + islandManager.getWorld().getName());
+        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + IslandManager.getWorld().getName() + " normal -g " + getName());
+        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + getName() + " " + IslandManager.getWorld().getName());
 
         if (IridiumSkyblock.getConfiguration().netherIslands) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + islandManager.getNetherWorld().getName() + " nether -g " + getName());
-            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + getName() + " " + islandManager.getNetherWorld().getName());
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv import " + IslandManager.getNetherWorld().getName() + " nether -g " + getName());
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "mv modify set generator " + getName() + " " + IslandManager.getNetherWorld().getName());
         }
     }
 
@@ -406,59 +401,6 @@ public class IridiumSkyblock extends JavaPlugin {
         }
     }
 
-    public void saveIslandManager() {
-        if (islandManager != null) {
-            getDataFolder().mkdir();
-            getPersist().save(islandManager, getPersist().getFile("IslandManager_temp"));
-            try {
-                if (persist.load(IslandManager.class, getPersist().getFile("IslandManager_temp")) == null) {
-                    getPersist().getFile("IslandManager_temp").delete();
-                    return;
-                }
-            } catch (Exception e) {
-                getPersist().getFile("IslandManager_temp").delete();
-                return;
-            }
-            getPersist().getFile(islandManager).delete();
-            getPersist().getFile("IslandManager_temp").renameTo(getPersist().getFile(islandManager));
-        }
-    }
-
-    public void backupIslandManager() {
-        if (islandManager != null) {
-            File backupsFolder = new File(getDataFolder(), "backups");
-            if (!backupsFolder.exists()) backupsFolder.mkdir();
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.DATE, -getConfiguration().deleteBackupsAfterDays);
-            for (File file : backupsFolder.listFiles()) {
-                Date date = getLocalDateTime(file.getName().replace(".json", "").replace("IslandManager_", ""));
-                if (date == null) {
-                    file.delete();
-                } else {
-                    if (date.before(cal.getTime())) {
-                        file.delete();
-                    }
-                }
-            }
-            getPersist().save(islandManager, new File(backupsFolder, "IslandManager_" + getCurrentTimeStamp() + ".json"));
-        }
-    }
-
-    public String getCurrentTimeStamp() {
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//dd/MM/yyyy
-        Date now = new Date();
-        return sdfDate.format(now);
-    }
-
-    public Date getLocalDateTime(String time) {
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");//dd/MM/yyyy
-        try {
-            return sdfDate.parse(time);
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         if (worldName.equals(configuration.worldName) || worldName.equals(configuration.netherWorldName))
@@ -484,36 +426,34 @@ public class IridiumSkyblock extends JavaPlugin {
         c.set(Calendar.MILLISECOND, 0);
         new Timer().schedule(new TimerTask() {
             public void run() {
-                if (islandManager != null) {
-                    LocalDateTime ldt = LocalDateTime.now();
-                    if (ldt.getDayOfWeek().equals(DayOfWeek.MONDAY) && getConfiguration().missionRestart.equals(MissionRestart.Weekly) || getConfiguration().missionRestart.equals(MissionRestart.Daily)) {
-                        for (Island island : islandManager.getLoadedIslands()) {
-                            island.resetMissions();
-                        }
+                LocalDateTime ldt = LocalDateTime.now();
+                if (ldt.getDayOfWeek().equals(DayOfWeek.MONDAY) && getConfiguration().missionRestart.equals(MissionRestart.Weekly) || getConfiguration().missionRestart.equals(MissionRestart.Daily)) {
+                    for (Island island : IslandManager.getLoadedIslands()) {
+                        island.resetMissions();
                     }
-                    for (User user : UserManager.cache.values()) {
-                        user.tookInterestMessage = false;
-                    }
-                    for (Island island : islandManager.getLoadedIslands()) {
-                        double cm = island.money;
-                        int cc = island.getCrystals();
-                        int ce = island.exp;
-                        island.money = Math.floor(island.money * (1 + (getConfiguration().dailyMoneyInterest / 100.00)));
-                        island.setCrystals((int) Math.floor(island.getCrystals() * (1 + (getConfiguration().dailyCrystalsInterest / 100.00))));
-                        island.exp = (int) Math.floor(island.exp * (1 + (getConfiguration().dailyExpInterest / 100.00)));
-                        island.interestCrystal = island.getCrystals() - cc;
-                        island.interestMoney = island.money - cm;
-                        island.interestExp = island.exp - ce;
-                        for (String member : island.getMembers()) {
-                            Player p = Bukkit.getPlayer(User.getUser(member).name);
-                            if (p != null) {
-                                if (cm != island.money && cc != island.getCrystals() && ce != island.exp)
-                                    p.sendMessage(Utils.color(IridiumSkyblock.getMessages().islandInterest
-                                            .replace("%exp%", Utils.NumberFormatter.format(island.interestExp))
-                                            .replace("%crystals%", Utils.NumberFormatter.format(island.interestCrystal))
-                                            .replace("%money%", Utils.NumberFormatter.format(island.interestMoney))
-                                            .replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
-                            }
+                }
+                for (User user : UserManager.cache.values()) {
+                    user.tookInterestMessage = false;
+                }
+                for (Island island : IslandManager.getLoadedIslands()) {
+                    double cm = island.money;
+                    int cc = island.getCrystals();
+                    int ce = island.exp;
+                    island.money = Math.floor(island.money * (1 + (getConfiguration().dailyMoneyInterest / 100.00)));
+                    island.setCrystals((int) Math.floor(island.getCrystals() * (1 + (getConfiguration().dailyCrystalsInterest / 100.00))));
+                    island.exp = (int) Math.floor(island.exp * (1 + (getConfiguration().dailyExpInterest / 100.00)));
+                    island.interestCrystal = island.getCrystals() - cc;
+                    island.interestMoney = island.money - cm;
+                    island.interestExp = island.exp - ce;
+                    for (String member : island.getMembers()) {
+                        Player p = Bukkit.getPlayer(User.getUser(member).name);
+                        if (p != null) {
+                            if (cm != island.money && cc != island.getCrystals() && ce != island.exp)
+                                p.sendMessage(Utils.color(IridiumSkyblock.getMessages().islandInterest
+                                        .replace("%exp%", Utils.NumberFormatter.format(island.interestExp))
+                                        .replace("%crystals%", Utils.NumberFormatter.format(island.interestCrystal))
+                                        .replace("%money%", Utils.NumberFormatter.format(island.interestMoney))
+                                        .replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
                         }
                     }
                 }
@@ -526,16 +466,16 @@ public class IridiumSkyblock extends JavaPlugin {
     public void islandValueManager() {
         //Loop through all online islands and make sure Island#valuableBlocks is accurate
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            ListIterator<Integer> islands = getIslandManager().getLoadedIslands().stream().map(Island::getId).collect(Collectors.toList()).listIterator();
+            ListIterator<Integer> islands = IslandManager.getLoadedIslands().stream().map(Island::getId).collect(Collectors.toList()).listIterator();
 
             @Override
             public void run() {
                 if (!islands.hasNext()) {
-                    islands = getIslandManager().getLoadedIslands().stream().map(Island::getId).collect(Collectors.toList()).listIterator();
+                    islands = IslandManager.getLoadedIslands().stream().map(Island::getId).collect(Collectors.toList()).listIterator();
                 }
                 if (islands.hasNext()) {
                     int id = islands.next();
-                    Island island = islandManager.getIslandViaId(id);
+                    Island island = IslandManager.getIslandViaId(id);
                     if (island != null) {
                         island.initBlocks();
                     }
@@ -613,30 +553,16 @@ public class IridiumSkyblock extends JavaPlugin {
     }
 
     public void loadManagers() {
+
         sqlManager = new SQLManager();
         sqlManager.createTables();
-        loadIslandManager();
-    }
-
-    public void loadIslandManager() {
-        islandManager = persist.getFile(IslandManager.class).exists() ? persist.load(IslandManager.class) : new IslandManager();
-
-        if (islandManager == null) return;
-        islandManager.moveToSQL();
-
-        for (Island island : islandManager.getLoadedIslands()) {
-            island.init();
-            if (island.getName().length() > configuration.maxIslandName) {
-                island.setName(island.getName().substring(0, configuration.maxIslandName));
-            }
-            if (island.getName().length() < configuration.minIslandName) {
-                Player owner = Bukkit.getPlayer(UUID.fromString(island.getOwner()));
-                island.setName(owner.getName());
-            }
+        if (persist.getFile("IslandManager").exists()) {
+            LegacyIslandManager legacyIslandManager = persist.load(LegacyIslandManager.class, persist.getFile("IslandManager"));
+            legacyIslandManager.moveToSQL();
+            persist.getFile("IslandManager").delete();
         }
-        islandManager.getWorld().getWorldBorder().setSize(Double.MAX_VALUE);
-        if (getConfiguration().netherIslands)
-            islandManager.getNetherWorld().getWorldBorder().setSize(Double.MAX_VALUE);
+        IslandManager.getWorld().getWorldBorder().setSize(Double.MAX_VALUE);
+        if (configuration.netherIslands) IslandManager.getNetherWorld().getWorldBorder().setSize(Double.MAX_VALUE);
     }
 
     public boolean loadConfigs() {
@@ -757,22 +683,20 @@ public class IridiumSkyblock extends JavaPlugin {
         if (getConfiguration().distance <= max) {
             getConfiguration().distance = max + 1;
         }
-        if (islandManager != null) {
-            for (Island island : islandManager.getLoadedIslands()) {
-                if (island.getIslandMenuGUI() != null) island.getIslandMenuGUI().getInventory().clear();
-                if (island.getSchematicSelectGUI() != null) island.getSchematicSelectGUI().getInventory().clear();
-                if (island.getBankGUI() != null) island.getBankGUI().getInventory().clear();
-                if (island.getBoosterGUI() != null) island.getBoosterGUI().getInventory().clear();
-                if (island.getCoopGUI() != null) island.getCoopGUI().getInventory().clear();
-                if (island.getMembersGUI() != null) island.getMembersGUI().getInventory().clear();
-                if (island.getMissionsGUI() != null) island.getMissionsGUI().getInventory().clear();
-                if (island.getPermissionsGUI() != null) island.getPermissionsGUI().getInventory().clear();
-                if (island.getUpgradeGUI() != null) island.getUpgradeGUI().getInventory().clear();
-                if (island.getWarpGUI() != null) island.getWarpGUI().getInventory().clear();
-                if (island.getBorderColorGUI() != null) island.getBorderColorGUI().getInventory().clear();
-                if (getConfiguration().missionRestart == MissionRestart.Instantly) {
-                    island.resetMissions();
-                }
+        for (Island island : IslandManager.getLoadedIslands()) {
+            if (island.getIslandMenuGUI() != null) island.getIslandMenuGUI().getInventory().clear();
+            if (island.getSchematicSelectGUI() != null) island.getSchematicSelectGUI().getInventory().clear();
+            if (island.getBankGUI() != null) island.getBankGUI().getInventory().clear();
+            if (island.getBoosterGUI() != null) island.getBoosterGUI().getInventory().clear();
+            if (island.getCoopGUI() != null) island.getCoopGUI().getInventory().clear();
+            if (island.getMembersGUI() != null) island.getMembersGUI().getInventory().clear();
+            if (island.getMissionsGUI() != null) island.getMissionsGUI().getInventory().clear();
+            if (island.getPermissionsGUI() != null) island.getPermissionsGUI().getInventory().clear();
+            if (island.getUpgradeGUI() != null) island.getUpgradeGUI().getInventory().clear();
+            if (island.getWarpGUI() != null) island.getWarpGUI().getInventory().clear();
+            if (island.getBorderColorGUI() != null) island.getBorderColorGUI().getInventory().clear();
+            if (getConfiguration().missionRestart == MissionRestart.Instantly) {
+                island.resetMissions();
             }
         }
         try {
@@ -794,9 +718,12 @@ public class IridiumSkyblock extends JavaPlugin {
     }
 
     public void saveData() {
-        if (islandManager != null) persist.save(islandManager);
         for (User user : UserManager.cache.values()) {
             user.save();
+        }
+
+        for (Island island : IslandManager.cache.values()) {
+            island.save();
         }
     }
 

@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.Color;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -41,13 +42,13 @@ public class BorderColorGUI extends GUI implements Listener {
                     e.getWhoClicked().openInventory(getIsland().getIslandMenuGUI().getInventory());
                 }
                 if (IridiumSkyblock.border.BlueEnabled && e.getSlot() == IridiumSkyblock.getInventories().blue.slot)
-                    IridiumSkyblock.getIslandManager().getIslandViaId(islandID).setBorderColor(Color.Blue);
+                    IslandManager.getIslandViaId(islandID).setBorderColor(Color.Blue);
                 if (IridiumSkyblock.border.RedEnabled && e.getSlot() == IridiumSkyblock.getInventories().red.slot)
-                    IridiumSkyblock.getIslandManager().getIslandViaId(islandID).setBorderColor(Color.Red);
+                    IslandManager.getIslandViaId(islandID).setBorderColor(Color.Red);
                 if (IridiumSkyblock.border.GreenEnabled && e.getSlot() == IridiumSkyblock.getInventories().green.slot)
-                    IridiumSkyblock.getIslandManager().getIslandViaId(islandID).setBorderColor(Color.Green);
+                    IslandManager.getIslandViaId(islandID).setBorderColor(Color.Green);
                 if (IridiumSkyblock.border.OffEnabled && e.getSlot() == IridiumSkyblock.getInventories().off.slot)
-                    IridiumSkyblock.getIslandManager().getIslandViaId(islandID).setBorderColor(Color.Off);
+                    IslandManager.getIslandViaId(islandID).setBorderColor(Color.Off);
             }
         }
     }

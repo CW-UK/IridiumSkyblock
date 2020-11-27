@@ -8,6 +8,10 @@ import org.bukkit.World.Environment;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -16,34 +20,27 @@ import java.util.stream.Collectors;
 
 public class IslandManager {
 
-    private Map<Integer, Island> islands = new HashMap<>();
-    private Map<List<Integer>, Set<Integer>> islandCache = null;
-    private Map<String, User> users = null;
+    public static Map<Integer, Island> cache = new HashMap<>();
 
-    public transient Integer id = 0;
+    public static transient Integer id = 0;
 
-    int length = 1;
-    int current = 0;
+    public static int length = 1;
+    public static int current = 0;
 
-    public Direction direction = Direction.NORTH;
-    public Location nextLocation;
+    public static Direction direction = Direction.NORTH;
+    public static Location nextLocation;
 
-    public int nextID = 1;
+    public static int nextID = 1;
 
-    public IslandManager() {
-        makeWorld();
-        nextLocation = new Location(getWorld(), 0, 0, 0);
-    }
-
-    public World getWorld() {
+    public static World getWorld() {
         return Bukkit.getWorld(IridiumSkyblock.getConfiguration().worldName);
     }
 
-    public World getNetherWorld() {
+    public static World getNetherWorld() {
         return Bukkit.getWorld(IridiumSkyblock.getConfiguration().netherWorldName);
     }
 
-    public void createIsland(Player player) {
+    public static void createIsland(Player player) {
         User user = User.getUser(player);
         if (user.isOnCooldown()) {
             //The user cannot create an island
@@ -62,10 +59,22 @@ public class IslandManager {
         Location netherhome = home.clone();
 
         if (IridiumSkyblock.getConfiguration().netherIslands) {
-            netherhome.setWorld(IridiumSkyblock.getIslandManager().getNetherWorld());
+            netherhome.setWorld(getNetherWorld());
         }
         Island island = new Island(player, pos1, pos2, center, home, netherhome, nextID);
-        islands.put(nextID, island);
+
+        try {
+            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+            PreparedStatement insert = connection.prepareStatement("INSERT INTO islands (id,json) VALUES (?,?);");
+            insert.setInt(1, nextID);
+            insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(island));
+            insert.executeUpdate();
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        cache.put(nextID, island);
 
         user.islandID = nextID;
         user.role = Role.Owner;
@@ -112,8 +121,8 @@ public class IslandManager {
         nextID++;
     }
 
-    public int purgeIslands(int days, CommandSender sender) {
-        List<Integer> ids = islands.values().stream().filter(island -> oldIsland(days, island)).map(Island::getId).collect(Collectors.toList());
+    public static int purgeIslands(int days, CommandSender sender) {
+        List<Integer> ids = getLoadedIslands().stream().filter(island -> oldIsland(days, island)).map(Island::getId).collect(Collectors.toList());
         final ListIterator<Integer> islandIds = ids.listIterator();
         id = Bukkit.getScheduler().scheduleSyncRepeatingTask(IridiumSkyblock.getInstance(), new Runnable() {
             int amount = 0;
@@ -135,7 +144,7 @@ public class IslandManager {
         return ids.size();
     }
 
-    private boolean oldIsland(int days, Island island) {
+    private static boolean oldIsland(int days, Island island) {
         LocalDateTime now = LocalDateTime.now();
         for (OfflinePlayer player : island.getMembers().stream().map(s -> Bukkit.getOfflinePlayer(UUID.fromString(s))).collect(Collectors.toList())) {
             if (player == null) continue;
@@ -148,30 +157,13 @@ public class IslandManager {
         return true;
     }
 
-    public void moveToSQL() {
-        if (users != null) {
-            for (String uuid : users.keySet()) {
-                UserManager.cache.put(UUID.fromString(uuid), users.get(uuid));
-            }
-            users = null;
-        }
-        if (islandCache != null) {
-            for (List<Integer> coords : islandCache.keySet()) {
-                for (int id : islandCache.get(coords)) {
-                    ClaimManager.addClaim(coords.get(0), coords.get(1), id);
-                }
-            }
-            islandCache = null;
-        }
-    }
-
-    private void makeWorld() {
+    public static void makeWorlds() {
         makeWorld(Environment.NORMAL, IridiumSkyblock.getConfiguration().worldName);
         if (IridiumSkyblock.getConfiguration().netherIslands)
             makeWorld(Environment.NETHER, IridiumSkyblock.getConfiguration().netherWorldName);
     }
 
-    private void makeWorld(Environment env, String name) {
+    private static void makeWorld(Environment env, String name) {
         WorldCreator wc = new WorldCreator(name);
         wc.type(WorldType.FLAT);
         wc.generateStructures(false);
@@ -180,11 +172,11 @@ public class IslandManager {
         wc.createWorld();
     }
 
-    public List<Island> getLoadedIslands() {
-        return new ArrayList<>(islands.values());
+    public static List<Island> getLoadedIslands() {
+        return new ArrayList<>(cache.values());
     }
 
-    public Island getIslandViaLocation(Location location) {
+    public static Island getIslandViaLocation(Location location) {
         if (location == null) return null;
         if (!isIslandWorld(location)) return null;
 
@@ -195,12 +187,12 @@ public class IslandManager {
         final Set<Integer> islandIds = ClaimManager.getIslands(chunk.getX(), chunk.getZ());
 
         for (int id : islandIds) {
-            final Island island = islands.get(id);
+            final Island island = getIslandViaId(id);
             if (island == null) continue;
             if (island.isInIsland(x, z)) return island;
         }
 
-        for (Island island : islands.values()) {
+        for (Island island : getLoadedIslands()) {
             if (!island.isInIsland(x, z)) continue;
             ClaimManager.addClaim(chunk.getX(), chunk.getZ(), island.getId());
             return island;
@@ -209,29 +201,78 @@ public class IslandManager {
         return null;
     }
 
-    public Island getIslandViaId(int i) {
-        return islands.getOrDefault(i, null);
+    public static Island getIslandViaId(int id) {
+
+        if (cache.containsKey(id)) return cache.get(id);
+        try {
+            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM islands WHERE id =?;");
+            statement.setInt(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                //There is a value
+                Island island = IridiumSkyblock.getPersist().getGson().fromJson(resultSet.getString("json"), Island.class);
+                cache.put(id, island);
+                connection.close();
+
+                island.init();
+                if (island.getName().length() > IridiumSkyblock.getConfiguration().maxIslandName) {
+                    island.setName(island.getName().substring(0, IridiumSkyblock.getConfiguration().maxIslandName));
+                }
+                if (island.getName().length() < IridiumSkyblock.getConfiguration().minIslandName) {
+                    Player owner = Bukkit.getPlayer(UUID.fromString(island.getOwner()));
+                    island.setName(owner.getName());
+                }
+
+                return island;
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return null;
     }
 
-    public boolean isIslandWorld(Location location) {
+    public static boolean isIslandWorld(Location location) {
         if (location == null) return false;
         return isIslandWorld(location.getWorld());
     }
 
-    public boolean isIslandWorld(World world) {
+    public static boolean isIslandWorld(World world) {
         if (world == null) return false;
         final String name = world.getName();
         return isIslandWorld(name);
     }
 
-    public boolean isIslandWorld(String name) {
+    public static boolean isIslandWorld(String name) {
         final Config config = IridiumSkyblock.getConfiguration();
         return (name.equals(config.worldName) || name.equals(config.netherWorldName));
     }
 
-    public void removeIsland(Island island) {
+    public static void save(Island island) {
+        try {
+            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+            PreparedStatement insert = connection.prepareStatement("UPDATE islands SET json = ? WHERE id = ?;");
+            insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(island));
+            insert.setInt(2, island.getId());
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public static void removeIsland(Island island) {
         final int id = island.getId();
-        islands.remove(id);
+        cache.remove(id);
+        try {
+            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+            PreparedStatement insert = connection.prepareStatement("DELETE FROM islands WHERE id=?;");
+            insert.setInt(1, id);
+            insert.executeUpdate();
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         ClaimManager.removeClaims(island.getId());
     }
 }

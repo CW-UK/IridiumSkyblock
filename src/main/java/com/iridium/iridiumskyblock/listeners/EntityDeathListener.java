@@ -27,8 +27,7 @@ public class EntityDeathListener implements Listener {
             if (killer == null) return;
 
             final Location location = killer.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            if (!islandManager.isIslandWorld(location)) return;
+            if (!IslandManager.isIslandWorld(location)) return;
 
             final User user = User.getUser(killer);
             final Island userIsland = user.getIsland();

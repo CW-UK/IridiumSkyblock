@@ -30,8 +30,7 @@ public class BlockPistonListener implements Listener {
         try {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             final BlockFace face = event.getDirection();
@@ -54,8 +53,7 @@ public class BlockPistonListener implements Listener {
         try {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             final BlockFace face = event.getDirection();
@@ -78,8 +76,7 @@ public class BlockPistonListener implements Listener {
         try {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             for (Block retractedBlock : event.getBlocks()) {

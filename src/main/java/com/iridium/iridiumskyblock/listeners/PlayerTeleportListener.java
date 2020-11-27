@@ -22,9 +22,8 @@ public class PlayerTeleportListener implements Listener {
         try {
             final Location toLocation = event.getTo();
             final Location fromLocation = event.getFrom();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            if (!islandManager.isIslandWorld(toLocation)) return;
-            final Island toIsland = islandManager.getIslandViaLocation(toLocation);
+            if (!IslandManager.isIslandWorld(toLocation)) return;
+            final Island toIsland = IslandManager.getIslandViaLocation(toLocation);
             if (toIsland == null) return;
 
             final Player player = event.getPlayer();
@@ -32,7 +31,7 @@ public class PlayerTeleportListener implements Listener {
             final User user = User.getUser(player);
 
             if (event.getCause().equals(TeleportCause.ENDER_PEARL)) {
-                Island fromIsland = islandManager.getIslandViaLocation(fromLocation);
+                Island fromIsland = IslandManager.getIslandViaLocation(fromLocation);
                 if (fromIsland == null || !fromIsland.isInIsland(toLocation)) {
                     event.setCancelled(true);
                     return;

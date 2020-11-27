@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -66,7 +67,7 @@ public class VisitGUI extends GUI implements Listener {
             e.setCancelled(true);
             if (e.getClickedInventory() == null || !e.getClickedInventory().equals(getInventory())) return;
             if (islands.containsKey(e.getSlot())) {
-                Island island = IridiumSkyblock.getIslandManager().getIslandViaId(islands.get(e.getSlot()));
+                Island island = IslandManager.getIslandViaId(islands.get(e.getSlot()));
                 User u = User.getUser((OfflinePlayer) e.getWhoClicked());
                 if (island.isVisit() || u.bypassing) {
                     if (e.getClick() == ClickType.RIGHT) {

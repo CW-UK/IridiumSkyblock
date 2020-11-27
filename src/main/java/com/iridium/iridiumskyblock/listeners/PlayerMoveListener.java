@@ -27,13 +27,12 @@ public class PlayerMoveListener implements Listener {
             final User user = User.getUser(player);
             final Island userIsland = user.getIsland();
             final Location location = player.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            if (!islandManager.isIslandWorld(location)) return;
+            if (!IslandManager.isIslandWorld(location)) return;
 
             final Config config = IridiumSkyblock.getConfiguration();
 
             if (event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ() || event.getFrom().getY() != event.getTo().getY() && event.getTo().getY() < 0) {
-                final Island island = islandManager.getIslandViaLocation(location);
+                final Island island = IslandManager.getIslandViaLocation(location);
 
                 if (island != null && !island.isVisit() && !island.equals(userIsland) && !island.isCoop(userIsland) && !user.bypassing) {
                     island.spawnPlayer(event.getPlayer());
@@ -46,17 +45,17 @@ public class PlayerMoveListener implements Listener {
 
                     if (island != null) {
                         if (!IridiumSkyblock.getConfiguration().keepInventoryOnVoid) player.getInventory().clear();
-                        if (world.getName().equals(islandManager.getWorld().getName()))
+                        if (world.getName().equals(IslandManager.getWorld().getName()))
                             island.teleportHome(player);
                         else
                             island.teleportNetherHome(player);
                     } else {
                         if (userIsland != null) {
-                            if (world.getName().equals(islandManager.getWorld().getName()))
+                            if (world.getName().equals(IslandManager.getWorld().getName()))
                                 userIsland.teleportHome(player);
-                            else if (world.getName().equals(islandManager.getNetherWorld().getName()))
+                            else if (world.getName().equals(IslandManager.getNetherWorld().getName()))
                                 userIsland.teleportNetherHome(player);
-                        } else if (islandManager.isIslandWorld(world)) {
+                        } else if (IslandManager.isIslandWorld(world)) {
                             if (Bukkit.getPluginManager().isPluginEnabled("EssentialsSpawn")) {
                                 final PluginManager pluginManager = Bukkit.getPluginManager();
                                 final EssentialsSpawn essentialsSpawn = (EssentialsSpawn) pluginManager.getPlugin("EssentialsSpawn");

@@ -23,8 +23,7 @@ public class EntityExplodeListener implements Listener {
         try {
             final Entity entity = event.getEntity();
             final Location location = entity.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            Island island = islandManager.getIslandViaLocation(location);
+            Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
 

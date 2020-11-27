@@ -28,11 +28,10 @@ public class BlockPlaceListener implements Listener {
         try {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) {
                 User user = User.getUser(event.getPlayer());
-                if (islandManager.isIslandWorld(event.getBlock().getWorld())) {
+                if (IslandManager.isIslandWorld(event.getBlock().getWorld())) {
                     if (!user.bypassing) {
                         event.setCancelled(true);
                     }
@@ -91,8 +90,7 @@ public class BlockPlaceListener implements Listener {
         try {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
-            final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-            final Island island = islandManager.getIslandViaLocation(location);
+            final Island island = IslandManager.getIslandViaLocation(location);
             if (island == null) return;
 
             if (IridiumSkyblock.getConfiguration().enableBlockStacking) {
