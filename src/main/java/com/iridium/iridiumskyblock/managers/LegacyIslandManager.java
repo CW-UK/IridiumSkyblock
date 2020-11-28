@@ -4,7 +4,6 @@ import com.iridium.iridiumskyblock.Direction;
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.sql.Connection;
@@ -51,7 +50,7 @@ public class LegacyIslandManager {
                 for (List<Integer> coords : islandCache.keySet()) {
                     for (int id : islandCache.get(coords)) {
                         IridiumSkyblock.getInstance().getLogger().info("Moving claim to SQL");
-                        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> ClaimManager.addClaim(coords.get(0), coords.get(1), id));
+                        ClaimManager.addClaim(coords.get(0), coords.get(1), id);
                     }
                 }
                 islandCache = null;
