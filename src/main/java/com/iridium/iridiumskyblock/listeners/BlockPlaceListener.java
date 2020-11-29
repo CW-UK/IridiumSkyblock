@@ -91,6 +91,9 @@ public class BlockPlaceListener implements Listener {
             final Block block = event.getBlock();
             final Location location = block.getLocation();
             final Island island = IslandManager.getIslandViaLocation(location);
+
+            final Material material = block.getType();
+            final XMaterial xmaterial = XMaterial.matchXMaterial(material);
             if (island == null) return;
 
             if (IridiumSkyblock.getConfiguration().enableBlockStacking) {
@@ -107,14 +110,17 @@ public class BlockPlaceListener implements Listener {
                         return original + 1;
                     });
                     Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), (Runnable) island::sendHomograms);
-                    Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), () -> block.setType(Material.AIR, false));
+                    block.setType(Material.AIR, false);
+                    island.valuableBlocks.compute(xmaterial.name(), (name, original) -> {
+                        if (original == null) return 1;
+                        return original + 1;
+                    });
+                    Bukkit.getScheduler().runTask(IridiumSkyblock.getInstance(), island::calculateIslandValue);
+                    return;
                 }
             }
 
             if (!Utils.isBlockValuable(block)) return;
-
-            final Material material = block.getType();
-            final XMaterial xmaterial = XMaterial.matchXMaterial(material);
             island.valuableBlocks.compute(xmaterial.name(), (name, original) -> {
                 if (original == null) return 1;
                 return original + 1;
