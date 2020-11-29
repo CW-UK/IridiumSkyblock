@@ -33,6 +33,7 @@ public class UserManager {
                 User user = IridiumSkyblock.getPersist().getGson().fromJson(resultSet.getString("json"), User.class);
                 cache.put(uuid, user);
                 connection.close();
+                statement.close();
                 return user;
             } else {
                 //There is no value so create one
@@ -43,6 +44,7 @@ public class UserManager {
                 insert.executeUpdate();
 
                 cache.put(uuid, user);
+                statement.close();
                 connection.close();
                 return user;
             }
@@ -59,6 +61,7 @@ public class UserManager {
             insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(user));
             insert.setString(2, user.player);
             insert.executeUpdate();
+            insert.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

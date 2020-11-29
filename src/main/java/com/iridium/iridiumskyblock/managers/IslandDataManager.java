@@ -31,6 +31,7 @@ public class IslandDataManager {
                 }
                 index++;
             }
+            statement.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -44,12 +45,14 @@ public class IslandDataManager {
             PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM islanddata where islandID=?;");
             deleteStatement.setInt(1, island.getId());
             deleteStatement.executeUpdate();
+            deleteStatement.close();
             PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO islanddata (islandID,value,votes,private) VALUES (?,?,?,?);");
             insertStatement.setInt(1, island.getId());
             insertStatement.setDouble(2, island.getValue());
             insertStatement.setInt(3, island.getVotes());
             insertStatement.setBoolean(4, !island.isVisit());
             insertStatement.executeUpdate();
+            insertStatement.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

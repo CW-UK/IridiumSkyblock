@@ -43,6 +43,7 @@ public class LegacyIslandManager {
                     insert.setString(1, uuid);
                     insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(user));
                     insert.executeUpdate();
+                    insert.close();
                 }
                 users = null;
             }
@@ -64,6 +65,7 @@ public class LegacyIslandManager {
                     insert.setInt(1, island.getId());
                     insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(island));
                     insert.executeUpdate();
+                    insert.close();
                     IslandDataManager.save(island);
                 }
             }
@@ -81,6 +83,7 @@ public class LegacyIslandManager {
             insert.setDouble(5, IslandManager.nextLocation.getX());
             insert.setDouble(6, IslandManager.nextLocation.getZ());
             insert.executeUpdate();
+            insert.close();
 
             connection.close();
         } catch (SQLException throwables) {

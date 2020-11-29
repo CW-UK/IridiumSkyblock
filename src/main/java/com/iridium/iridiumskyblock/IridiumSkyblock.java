@@ -587,7 +587,9 @@ public class IridiumSkyblock extends JavaPlugin {
                 insert.setDouble(5, IslandManager.nextLocation.getX());
                 insert.setDouble(6, IslandManager.nextLocation.getZ());
                 insert.executeUpdate();
+                insert.close();
             }
+            statement.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -767,6 +769,7 @@ public class IridiumSkyblock extends JavaPlugin {
             insert.setDouble(5, IslandManager.nextLocation.getX());
             insert.setDouble(6, IslandManager.nextLocation.getZ());
             insert.executeUpdate();
+            insert.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

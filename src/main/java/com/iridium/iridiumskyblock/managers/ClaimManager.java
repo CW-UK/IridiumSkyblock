@@ -25,6 +25,7 @@ public class ClaimManager {
             while (resultSet.next()) {
                 islands.add(resultSet.getInt("island"));
             }
+            statement.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -40,6 +41,7 @@ public class ClaimManager {
             insert.setInt(2, z);
             insert.setInt(3, island);
             insert.executeUpdate();
+            insert.close();
             connection.close();
             cache.remove(Collections.unmodifiableList(Arrays.asList(x, z)));
         } catch (SQLException throwables) {
@@ -53,6 +55,7 @@ public class ClaimManager {
             PreparedStatement insert = connection.prepareStatement("DELETE FROM claims WHERE island=?;");
             insert.setInt(1, island);
             insert.executeUpdate();
+            insert.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();

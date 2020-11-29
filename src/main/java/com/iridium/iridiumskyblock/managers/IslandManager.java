@@ -69,6 +69,7 @@ public class IslandManager {
             insert.setInt(1, nextID);
             insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(island));
             insert.executeUpdate();
+            insert.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -256,6 +257,7 @@ public class IslandManager {
             insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(island));
             insert.setInt(2, island.getId());
             insert.executeUpdate();
+            insert.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -270,6 +272,7 @@ public class IslandManager {
             PreparedStatement insert = connection.prepareStatement("DELETE FROM islands WHERE id=?;");
             insert.setInt(1, id);
             insert.executeUpdate();
+            insert.close();
             connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
