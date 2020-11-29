@@ -18,7 +18,8 @@ public class ClaimManager {
         if (cache.containsKey(chunkKey)) return cache.get(chunkKey);
         Set<Integer> islands = new HashSet<>();
         try {
-            PreparedStatement statement = IridiumSkyblock.getSqlManager().getConnection().prepareStatement("SELECT * FROM claims WHERE x =? AND z=?;");
+            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM claims WHERE x =? AND z=?;");
             statement.setInt(1, x);
             statement.setInt(2, z);
 
@@ -27,6 +28,7 @@ public class ClaimManager {
                 islands.add(resultSet.getInt("island"));
             }
             statement.close();
+            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
