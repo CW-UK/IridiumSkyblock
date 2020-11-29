@@ -21,8 +21,9 @@ public class HomeCommand extends Command {
     public void execute(CommandSender sender, String[] args) {
         Player p = (Player) sender;
         User user = User.getUser(p);
-        if (user.getIsland() != null) {
-            user.getIsland().teleportHome(p);
+        Island island = user.getIsland();
+        if (island != null) {
+            island.teleportHome(p);
         } else {
             if (IridiumSkyblock.getConfiguration().createIslandonHome) {
                 IslandManager.createIsland(p);

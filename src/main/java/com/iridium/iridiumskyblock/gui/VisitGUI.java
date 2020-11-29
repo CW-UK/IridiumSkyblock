@@ -29,7 +29,7 @@ public class VisitGUI extends GUI implements Listener {
     private final int page;
 
     public VisitGUI(int page) {
-        super(IridiumSkyblock.getInventories().visitGUISize, IridiumSkyblock.getInventories().visitGUITitle);
+        super(IridiumSkyblock.getInventories().visitGUISize, IridiumSkyblock.getInventories().visitGUITitle, 40);
         IridiumSkyblock.getInstance().registerListeners(this);
         this.page = page;
     }

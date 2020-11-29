@@ -31,6 +31,17 @@ public abstract class GUI {
         scheduler = Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), this::addContent, 0, 2);
     }
 
+    public GUI(Island island, int size, String name, int refresh) {
+        islandID = island.getId();
+        this.inventory = Bukkit.createInventory(null, size, Utils.color(name));
+        scheduler = Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), this::addContent, 0, refresh);
+    }
+
+    public GUI(int size, String name, int refresh) {
+        this.inventory = Bukkit.createInventory(null, size, Utils.color(name));
+        scheduler = Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), this::addContent, 0, refresh);
+    }
+
     public void addContent() {
         if (inventory.getViewers().isEmpty()) return;
         for (int i = 0; i < inventory.getSize(); i++) {
