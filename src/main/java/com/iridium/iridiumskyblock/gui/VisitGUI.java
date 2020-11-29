@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class VisitGUI extends GUI implements Listener {
 
@@ -36,16 +38,23 @@ public class VisitGUI extends GUI implements Listener {
     public void addContent() {
         super.addContent();
         if (getInventory().getViewers().isEmpty()) return;
-        List<Integer> islandIDS = IslandDataManager.getIslands(IslandDataManager.IslandSortType.VOTES, 45 * (page - 1), 45 * page, true);
-        for (int i = 0; i < islandIDS.size(); i++) {
-            Island island = IslandManager.getIslandViaId(islandIDS.get(i));
-            if (island == null) continue;
-            User owner = User.getUser(island.getOwner());
-            ItemStack head = Utils.makeItem(IridiumSkyblock.getInventories().visitisland, Arrays.asList(new Utils.Placeholder("player", owner.name), new Utils.Placeholder("name", island.getName()), new Utils.Placeholder("rank", Utils.getIslandRank(island) + ""), new Utils.Placeholder("votes", NumberFormat.getInstance().format(island.getVotes())), new Utils.Placeholder("value", island.getFormattedValue())));
-            islands.put(i, island.getId());
-            setItem(i, head);
+        CompletableFuture<List<Integer>> completableFuture = IslandDataManager.getIslands(IslandDataManager.IslandSortType.VOTES, 45 * (page - 1), 45 * page, true);
+        completableFuture.thenRun(() -> {
+            try {
+                List<Integer> islandIDS = completableFuture.get();
+                for (int i = 0; i < islandIDS.size(); i++) {
+                    Island island = IslandManager.getIslandViaId(islandIDS.get(i));
+                    if (island == null) continue;
+                    User owner = User.getUser(island.getOwner());
+                    ItemStack head = Utils.makeItem(IridiumSkyblock.getInventories().visitisland, Arrays.asList(new Utils.Placeholder("player", owner.name), new Utils.Placeholder("name", island.getName()), new Utils.Placeholder("rank", Utils.getIslandRank(island) + ""), new Utils.Placeholder("votes", NumberFormat.getInstance().format(island.getVotes())), new Utils.Placeholder("value", island.getFormattedValue())));
+                    islands.put(i, island.getId());
+                    setItem(i, head);
 
-        }
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
         setItem(getInventory().getSize() - 3, Utils.makeItem(IridiumSkyblock.getInventories().nextPage));
         setItem(getInventory().getSize() - 7, Utils.makeItem(IridiumSkyblock.getInventories().previousPage));
     }
