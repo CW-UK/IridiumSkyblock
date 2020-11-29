@@ -5,13 +5,12 @@ import com.iridium.iridiumskyblock.configs.SQL;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
 public class SQLManager {
-    private HikariDataSource hikariDataSource = new HikariDataSource();
+    private final HikariDataSource hikariDataSource = new HikariDataSource();
 
     public SQLManager() {
         setupConnection();
@@ -20,40 +19,14 @@ public class SQLManager {
     private void setupConnection() {
         final SQL sql = IridiumSkyblock.getSql();
         hikariDataSource.setMaximumPoolSize(10);
-        //Check if we need to use SQL or SQLLite
         if (sql.username.isEmpty()) {
-            //If the username is empty, continue with sql lite
-            File dataFolder = new File(IridiumSkyblock.getInstance().getDataFolder(), sql.database + ".db");
-            if (!dataFolder.exists()) {
-                //Create the .db file if it doesnt exist
-                try {
-                    dataFolder.createNewFile();
-                } catch (IOException e) {
-                    IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "File write error: " + sql.database + ".db");
-                }
-            }
-            hikariDataSource.setJdbcUrl("jdbc:sqlite:" + dataFolder);
-//            try {
-//                Class.forName("org.sqlite.JDBC");
-//                return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-//            } catch (SQLException ex) {
-//                IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "SQL exception on initialize", ex);
-//            } catch (ClassNotFoundException ex) {
-//                IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "Could not find SQL library");
-//            }
+            //SQL Lite
+            hikariDataSource.setJdbcUrl("jdbc:sqlite:" + new File(IridiumSkyblock.getInstance().getDataFolder(), sql.database + ".db"));
         } else {
             //Use SQL
             hikariDataSource.setUsername(sql.username);
             hikariDataSource.setPassword(sql.password);
             hikariDataSource.setJdbcUrl("jdbc:mysql://" + sql.host + ":" + sql.port + "/" + sql.database);
-//            try {
-//                Class.forName("com.mysql.jdbc.Driver");
-//                return DriverManager.getConnection("jdbc:mysql://" + sql.host + ":" + sql.port + "/" + sql.database, sql.username, sql.password);
-//            } catch (SQLException ex) {
-//                IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "SQLite exception on initialize", ex);
-//            } catch (ClassNotFoundException ex) {
-//                IridiumSkyblock.getInstance().getLogger().log(Level.SEVERE, "Could not find SQL library");
-//            }
         }
     }
 
