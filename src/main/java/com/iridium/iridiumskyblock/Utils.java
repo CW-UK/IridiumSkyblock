@@ -391,10 +391,11 @@ public class Utils {
 
     public static void pay(Player p, double vault, int crystals) {
         User u = User.getUser(p);
-        if (u.getIsland() != null) {
-            u.getIsland().setCrystals(u.getIsland().getCrystals() + crystals);
+        Island island = u.getIsland();
+        if (island != null) {
+            island.setCrystals(island.getCrystals() + crystals);
             if (IridiumSkyblock.getInstance().getEconomy() == null) {
-                u.getIsland().money += vault;
+                island.money += vault;
             } else {
                 IridiumSkyblock.getInstance().getEconomy().depositPlayer(p, vault);
             }

@@ -56,8 +56,9 @@ public class AdminCommand extends Command {
     private void runCommand(String[] args, Player p) {
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
         User u = User.getUser(player);
-        if (u.getIsland() != null) {
-            p.openInventory(u.getIsland().getIslandAdminGUI().getInventory());
+        Island island = u.getIsland();
+        if (island != null) {
+            p.openInventory(island.getIslandAdminGUI().getInventory());
         } else {
             p.sendMessage(Utils.color(IridiumSkyblock.getMessages().playerNoIsland.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
         }

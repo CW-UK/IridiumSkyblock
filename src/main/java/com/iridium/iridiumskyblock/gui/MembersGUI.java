@@ -52,17 +52,19 @@ public class MembersGUI extends GUI implements Listener {
             if (e.getClickedInventory() == null || !e.getClickedInventory().equals(getInventory())) return;
             if (e.getSlot() == getInventory().getSize() - 5 && IridiumSkyblock.getInventories().backButtons) {
                 e.getWhoClicked().openInventory(getIsland().getIslandMenuGUI().getInventory());
+                return;
             }
-            if (User.getUser((OfflinePlayer) e.getWhoClicked()).bypassing || getIsland().equals(User.getUser((OfflinePlayer) e.getWhoClicked()).getIsland())) {
+            User user = User.getUser((Player) e.getWhoClicked());
+            Island island = user.getIsland();
+            if (user.bypassing || getIsland().equals(island)) {
                 if (users.containsKey(e.getSlot())) {
                     User u = users.get(e.getSlot());
-                    User user = User.getUser((Player) e.getWhoClicked());
                     if (e.getClick().equals(ClickType.LEFT)) {
-                        if (user.getIsland().getPermissions(user.role).demote) {
+                        if (island.getPermissions(user.role).demote) {
                             if (u.getRole().getRank() < user.role.getRank()) {
                                 if (u.getRole().equals(Role.Member)) {
-                                    if (user.getIsland().getPermissions(user.role).kickMembers) {
-                                        user.getIsland().removeUser(u);
+                                    if (island.getPermissions(user.role).kickMembers) {
+                                        island.removeUser(u);
                                         getInventory().clear();
                                         Player player = Bukkit.getPlayer(u.name);
                                         if (player != null)
@@ -71,11 +73,11 @@ public class MembersGUI extends GUI implements Listener {
                                         e.getWhoClicked().sendMessage(Utils.color(IridiumSkyblock.getMessages().noPermission.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
                                     }
                                 } else {
-                                    IslandDemoteEvent event = new IslandDemoteEvent(u.getIsland(), u, user, Role.getViaRank(u.getRole().getRank() + 1));
+                                    IslandDemoteEvent event = new IslandDemoteEvent(island, u, user, Role.getViaRank(u.getRole().getRank() + 1));
                                     Bukkit.getPluginManager().callEvent(event);
                                     if (!event.isCancelled()) {
                                         u.role = Role.getViaRank(u.getRole().getRank() - 1);
-                                        for (String member : u.getIsland().getMembers()) {
+                                        for (String member : island.getMembers()) {
                                             Player p = Bukkit.getPlayer(User.getUser(member).name);
                                             if (p != null) {
                                                 p.sendMessage(Utils.color(IridiumSkyblock.getMessages().playerDemoted.replace("%rank%", u.getRole().toString()).replace("%player%", u.name).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
@@ -90,22 +92,22 @@ public class MembersGUI extends GUI implements Listener {
                             e.getWhoClicked().sendMessage(Utils.color(IridiumSkyblock.getMessages().noPermission.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
                         }
                     } else {
-                        if (user.getIsland().getPermissions(user.role).promote) {
+                        if (island.getPermissions(user.role).promote) {
                             if (!(u.getRole().equals(Role.Owner))) {
                                 if (u.getRole().getRank() < user.role.getRank()) {
                                     if (u.getRole().getRank() >= Role.CoOwner.getRank()) {
-                                        e.getWhoClicked().openInventory(new ConfirmationGUI(user.getIsland(), () -> {
+                                        e.getWhoClicked().openInventory(new ConfirmationGUI(island, () -> {
                                             OfflinePlayer p = Bukkit.getOfflinePlayer(u.name);
                                             if (p != null) {
-                                                u.getIsland().setOwner(p);
+                                                island.setOwner(p);
                                             }
                                         }, IridiumSkyblock.getMessages().transferAction.replace("%player%", u.name)).getInventory());
                                     } else {
-                                        IslandPromoteEvent event = new IslandPromoteEvent(u.getIsland(), u, user, Role.getViaRank(u.getRole().getRank() + 1));
+                                        IslandPromoteEvent event = new IslandPromoteEvent(island, u, user, Role.getViaRank(u.getRole().getRank() + 1));
                                         Bukkit.getPluginManager().callEvent(event);
                                         if (!event.isCancelled()) {
                                             u.role = Role.getViaRank(u.getRole().getRank() + 1);
-                                            for (String member : u.getIsland().getMembers()) {
+                                            for (String member : island.getMembers()) {
                                                 Player p = Bukkit.getPlayer(User.getUser(member).name);
                                                 if (p != null) {
                                                     p.sendMessage(Utils.color(IridiumSkyblock.getMessages().playerPromoted.replace("%rank%", u.getRole().toString()).replace("%player%", u.name).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));

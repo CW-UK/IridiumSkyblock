@@ -29,9 +29,9 @@ public class JoinCommand extends Command {
         User user = User.getUser(p);
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
         User u = User.getUser(player);
-        if (u.getIsland() != null) {
+        Island island = u.getIsland();
+        if (island != null) {
             if (user.getIsland() == null) {
-                Island island = u.getIsland();
                 if (user.invites.contains(island.getId())) {
                     IslandJoinEvent joinEvent = new IslandJoinEvent(island, user);
                     Bukkit.getPluginManager().callEvent(joinEvent);

@@ -229,6 +229,7 @@ public class IslandManager {
 
                 return island;
             }
+            cache.put(id, null);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
