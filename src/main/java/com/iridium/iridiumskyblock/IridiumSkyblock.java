@@ -382,7 +382,7 @@ public class IridiumSkyblock extends JavaPlugin {
         try {
             super.onDisable();
 
-            saveData();
+            saveData(false);
 
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.closeInventory();
@@ -750,7 +750,8 @@ public class IridiumSkyblock extends JavaPlugin {
         return legacy.get(material.name() + data);
     }
 
-    public void saveData() {
+    public void saveData(boolean async) {
+        if (async) Bukkit.getScheduler().runTaskAsynchronously(this, () -> saveData(false));
         for (User user : UserManager.cache.values()) {
             user.save();
         }

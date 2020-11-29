@@ -2,6 +2,7 @@ package com.iridium.iridiumskyblock.managers;
 
 import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.User;
+import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,17 +56,19 @@ public class UserManager {
     }
 
     public static void saveUser(User user) {
-        try {
-            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
-            PreparedStatement insert = connection.prepareStatement("UPDATE users SET json = ? WHERE UUID = ?;");
-            insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(user));
-            insert.setString(2, user.player);
-            insert.executeUpdate();
-            insert.close();
-            connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+            try {
+                Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+                PreparedStatement insert = connection.prepareStatement("UPDATE users SET json = ? WHERE UUID = ?;");
+                insert.setString(1, IridiumSkyblock.getPersist().getGson().toJson(user));
+                insert.setString(2, user.player);
+                insert.executeUpdate();
+                insert.close();
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
     }
 
 }

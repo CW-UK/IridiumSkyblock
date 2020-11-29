@@ -62,18 +62,19 @@ public class IslandManager {
             netherhome.setWorld(getNetherWorld());
         }
         Island island = new Island(player, pos1, pos2, center, home, netherhome, nextID);
-
-        try {
-            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
-            PreparedStatement insert = connection.prepareStatement("INSERT INTO islands (id,json) VALUES (?,?);");
-            insert.setInt(1, nextID);
-            insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(island));
-            insert.executeUpdate();
-            insert.close();
-            connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+            try {
+                Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+                PreparedStatement insert = connection.prepareStatement("INSERT INTO islands (id,json) VALUES (?,?);");
+                insert.setInt(1, nextID);
+                insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(island));
+                insert.executeUpdate();
+                insert.close();
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
 
         cache.put(nextID, island);
 
@@ -119,7 +120,7 @@ public class IslandManager {
 
         nextID++;
 
-        IridiumSkyblock.getInstance().saveData();
+        IridiumSkyblock.getInstance().saveData(true);
     }
 
     public static int purgeIslands(int days, CommandSender sender) {
@@ -267,16 +268,18 @@ public class IslandManager {
     public static void removeIsland(Island island) {
         final int id = island.getId();
         cache.remove(id);
-        try {
-            Connection connection = IridiumSkyblock.getSqlManager().getConnection();
-            PreparedStatement insert = connection.prepareStatement("DELETE FROM islands WHERE id=?;");
-            insert.setInt(1, id);
-            insert.executeUpdate();
-            insert.close();
-            connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+            try {
+                Connection connection = IridiumSkyblock.getSqlManager().getConnection();
+                PreparedStatement insert = connection.prepareStatement("DELETE FROM islands WHERE id=?;");
+                insert.setInt(1, id);
+                insert.executeUpdate();
+                insert.close();
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        });
         ClaimManager.removeClaims(island.getId());
     }
 }
