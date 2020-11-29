@@ -64,6 +64,7 @@ public class LegacyIslandManager {
                     insert.setInt(1, island.getId());
                     insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(island));
                     insert.executeUpdate();
+                    IslandDataManager.save(island);
                 }
             }
             IslandManager.length = length;

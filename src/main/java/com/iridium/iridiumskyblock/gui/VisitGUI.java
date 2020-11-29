@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandDataManager;
 import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -35,26 +36,15 @@ public class VisitGUI extends GUI implements Listener {
     public void addContent() {
         super.addContent();
         if (getInventory().getViewers().isEmpty()) return;
-        List<Island> top = Utils.getIslands();
-        int slot = 0;
-        int i = 45 * (page - 1);
-        while (slot < 45) {
-            if (top.size() > i && i >= 0) {
-                Island island = top.get(i);
-                if (island.isVisit()) {
-                    User owner = User.getUser(island.getOwner());
-                    ItemStack head = Utils.makeItem(IridiumSkyblock.getInventories().visitisland, Arrays.asList(new Utils.Placeholder("player", owner.name), new Utils.Placeholder("name", island.getName()), new Utils.Placeholder("rank", Utils.getIslandRank(island) + ""), new Utils.Placeholder("votes", NumberFormat.getInstance().format(island.getVotes())), new Utils.Placeholder("value", island.getFormattedValue())));
-                    islands.put(slot, island.getId());
-                    setItem(slot, head);
-                    slot++;
-                } else {
-                    setItem(slot, Utils.makeItemHidden(IridiumSkyblock.getInventories().background));
-                }
-                i++;
-            } else {
-                setItem(slot, Utils.makeItemHidden(IridiumSkyblock.getInventories().background));
-                slot++;
-            }
+        List<Integer> islandIDS = IslandDataManager.getIslands(IslandDataManager.IslandSortType.VOTES, 45 * (page - 1), 45 * page, true);
+        for (int i = 0; i < islandIDS.size(); i++) {
+            Island island = IslandManager.getIslandViaId(islandIDS.get(i));
+            if (island == null) continue;
+            User owner = User.getUser(island.getOwner());
+            ItemStack head = Utils.makeItem(IridiumSkyblock.getInventories().visitisland, Arrays.asList(new Utils.Placeholder("player", owner.name), new Utils.Placeholder("name", island.getName()), new Utils.Placeholder("rank", Utils.getIslandRank(island) + ""), new Utils.Placeholder("votes", NumberFormat.getInstance().format(island.getVotes())), new Utils.Placeholder("value", island.getFormattedValue())));
+            islands.put(i, island.getId());
+            setItem(i, head);
+
         }
         setItem(getInventory().getSize() - 3, Utils.makeItem(IridiumSkyblock.getInventories().nextPage));
         setItem(getInventory().getSize() - 7, Utils.makeItem(IridiumSkyblock.getInventories().previousPage));

@@ -63,6 +63,9 @@ public class SQLManager {
             connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS islandmanager "
                     + "(nextID INTEGER, length INTEGER, current INTEGER, x DOUBLE, y DOUBLE, direction VARCHAR(10));");
 
+            connection.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS islanddata "
+                    + "(islandID INTEGER, value DOUBLE, votes INTEGER, private BOOLEAN);");
+
             connection.close();
 
         } catch (SQLException ex) {

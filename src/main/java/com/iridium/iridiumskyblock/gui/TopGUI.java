@@ -5,6 +5,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.Island;
 import com.iridium.iridiumskyblock.User;
 import com.iridium.iridiumskyblock.Utils;
+import com.iridium.iridiumskyblock.managers.IslandDataManager;
 import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -28,11 +29,12 @@ public class TopGUI extends GUI implements Listener {
     public void addContent() {
         super.addContent();
         if (getInventory().getViewers().isEmpty()) return;
-        List<Island> top = Utils.getTopIslands();
         ItemStack filler = Utils.makeItem(IridiumSkyblock.getInventories().topfiller);
         for (int i : IridiumSkyblock.getConfiguration().islandTopSlots.keySet()) {
-            if (top.size() >= i) {
-                Island island = top.get(i - 1);
+            List<Integer> islandid = IslandDataManager.getIslands(IslandDataManager.IslandSortType.VALUE, i-1, i , false);
+            if (islandid.size() > 0) {
+                Island island = IslandManager.getIslandViaId(islandid.get(0));
+                if (island == null) continue;
                 User owner = User.getUser(island.getOwner());
                 ArrayList<Utils.Placeholder> placeholders = new ArrayList<>(Arrays.asList(new Utils.Placeholder("player", owner.name), new Utils.Placeholder("votes", island.getVotes() + ""), new Utils.Placeholder("name", island.getName()), new Utils.Placeholder("rank", i + ""), new Utils.Placeholder("level", Utils.NumberFormatter.format(island.getValue() / IridiumSkyblock.getConfiguration().valuePerLevel)), new Utils.Placeholder("value", island.getFormattedValue()), new Utils.Placeholder("members", island.getMembers().size() + "")));
                 for (XMaterial item : IridiumSkyblock.getBlockValues().blockvalue.keySet()) {
@@ -49,7 +51,8 @@ public class TopGUI extends GUI implements Listener {
                 setItem(IridiumSkyblock.getConfiguration().islandTopSlots.get(i), filler);
             }
         }
-        if (IridiumSkyblock.getInventories().backButtons) setItem(getInventory().getSize() - 5, Utils.makeItem(IridiumSkyblock.getInventories().back));
+        if (IridiumSkyblock.getInventories().backButtons)
+            setItem(getInventory().getSize() - 5, Utils.makeItem(IridiumSkyblock.getInventories().back));
     }
 
     @EventHandler

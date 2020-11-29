@@ -8,10 +8,7 @@ import com.iridium.iridiumskyblock.commands.CommandManager;
 import com.iridium.iridiumskyblock.configs.*;
 import com.iridium.iridiumskyblock.gui.*;
 import com.iridium.iridiumskyblock.listeners.*;
-import com.iridium.iridiumskyblock.managers.IslandManager;
-import com.iridium.iridiumskyblock.managers.LegacyIslandManager;
-import com.iridium.iridiumskyblock.managers.SQLManager;
-import com.iridium.iridiumskyblock.managers.UserManager;
+import com.iridium.iridiumskyblock.managers.*;
 import com.iridium.iridiumskyblock.nms.NMS;
 import com.iridium.iridiumskyblock.placeholders.ClipPlaceholderAPIManager;
 import com.iridium.iridiumskyblock.placeholders.MVDWPlaceholderAPIManager;
@@ -758,6 +755,7 @@ public class IridiumSkyblock extends JavaPlugin {
 
         for (Island island : IslandManager.cache.values()) {
             island.save();
+            IslandDataManager.save(island);
         }
         try {
             Connection connection = getSqlManager().getConnection();

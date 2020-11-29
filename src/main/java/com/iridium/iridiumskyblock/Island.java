@@ -12,6 +12,7 @@ import com.iridium.iridiumskyblock.configs.*;
 import com.iridium.iridiumskyblock.configs.Missions.Mission;
 import com.iridium.iridiumskyblock.configs.Missions.MissionData;
 import com.iridium.iridiumskyblock.gui.*;
+import com.iridium.iridiumskyblock.managers.IslandDataManager;
 import com.iridium.iridiumskyblock.managers.IslandManager;
 import com.iridium.iridiumskyblock.support.SpawnerSupport;
 import lombok.Getter;
@@ -617,6 +618,7 @@ public class Island {
         IslandWorthCalculatedEvent islandWorthCalculatedEvent = new IslandWorthCalculatedEvent(this, this.value);
         Bukkit.getPluginManager().callEvent(islandWorthCalculatedEvent);
         this.value = islandWorthCalculatedEvent.getIslandWorth();
+        IslandDataManager.save(this);
     }
 
     public void addWarp(Player player, Location location, String name, String password) {
@@ -990,11 +992,13 @@ public class Island {
     public void removeVote(User user) {
         if (votes == null) votes = new HashSet<>();
         votes.remove(user.player);
+        IslandDataManager.save(this);
     }
 
     public void addVote(User user) {
         if (votes == null) votes = new HashSet<>();
         votes.add(user.player);
+        IslandDataManager.save(this);
     }
 
     public boolean hasVoted(User user) {
@@ -1280,7 +1284,7 @@ public class Island {
         return Utils.NumberFormatter.format(crystals);
     }
 
-    public void save(){
+    public void save() {
         IslandManager.save(this);
     }
 }
