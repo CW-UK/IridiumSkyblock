@@ -55,8 +55,8 @@ public class UserManager {
         return null;
     }
 
-    public static void saveUser(User user) {
-        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+    public static void saveUser(User user, boolean async) {
+        if(async) Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> saveUser(user, false));
             try {
                 Connection connection = IridiumSkyblock.getSqlManager().getConnection();
                 PreparedStatement insert = connection.prepareStatement("UPDATE users SET json = ? WHERE UUID = ?;");
@@ -68,7 +68,6 @@ public class UserManager {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-        });
     }
 
 }

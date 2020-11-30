@@ -252,7 +252,8 @@ public class IslandManager {
         return (name.equals(config.worldName) || name.equals(config.netherWorldName));
     }
 
-    public static void save(Island island) {
+    public static void save(Island island, boolean async) {
+        if(async) Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> save(island, false));
         try {
             Connection connection = IridiumSkyblock.getSqlManager().getConnection();
             PreparedStatement insert = connection.prepareStatement("UPDATE islands SET json = ? WHERE id = ?;");

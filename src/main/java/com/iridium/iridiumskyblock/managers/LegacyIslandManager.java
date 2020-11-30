@@ -59,14 +59,12 @@ public class LegacyIslandManager {
             if (islands != null) {
                 for (Island island : islands.values()) {
                     IridiumSkyblock.getInstance().getLogger().info("Moving Island " + island.getId() + " To SQL");
-                    IslandManager.cache.put(island.getId(), island);
-                    island.init();
                     PreparedStatement insert = connection.prepareStatement("INSERT INTO islands (id,json) VALUES (?,?);");
                     insert.setInt(1, island.getId());
                     insert.setString(2, IridiumSkyblock.getPersist().getGson().toJson(island));
                     insert.executeUpdate();
                     insert.close();
-                    IslandDataManager.save(island);
+                    IslandDataManager.save(island, false);
                 }
             }
             IslandManager.length = length;

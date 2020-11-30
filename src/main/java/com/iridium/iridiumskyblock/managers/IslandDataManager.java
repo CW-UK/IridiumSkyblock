@@ -45,8 +45,8 @@ public class IslandDataManager {
         return completableFuture;
     }
 
-    public static void save(Island island) {
-        Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> {
+    public static void save(Island island, boolean async) {
+        if(async) Bukkit.getScheduler().runTaskAsynchronously(IridiumSkyblock.getInstance(), () -> save(island, false));
             Connection connection = IridiumSkyblock.getSqlManager().getConnection();
             try {
                 PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM islanddata where islandID=?;");
@@ -64,7 +64,6 @@ public class IslandDataManager {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-        });
     }
 
     public enum IslandSortType {

@@ -176,6 +176,7 @@ public class IridiumSkyblock extends JavaPlugin {
                 registerListeners(new StructureGrowListener(), new EntitySpawnListener(), new BlockPistonListener(), new EntityPickupItemListener(), new PlayerTalkListener(), new ItemCraftListener(), new PlayerTeleportListener(), new PlayerPortalListener(), new BlockBreakListener(), new BlockPlaceListener(), new PlayerInteractListener(), new BlockFromToListener(), new SpawnerSpawnListener(), new EntityDeathListener(), new PlayerJoinLeaveListener(), new BlockGrowListener(), new PlayerTalkListener(), new PlayerMoveListener(), new EntityDamageByEntityListener(), new PlayerExpChangeListener(), new PlayerFishListener(), new EntityExplodeListener(), new PlayerBucketEmptyListener(), new EntityTargetLivingEntityListener());
 
                 Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), this::addPages, 0, 20 * 60);
+                Bukkit.getScheduler().scheduleAsyncRepeatingTask(IridiumSkyblock.getInstance(), () -> saveData(false), 0, 20 * 60);
 
                 setupPlaceholderAPI();
 
@@ -753,12 +754,12 @@ public class IridiumSkyblock extends JavaPlugin {
     public void saveData(boolean async) {
         if (async) Bukkit.getScheduler().runTaskAsynchronously(this, () -> saveData(false));
         for (User user : UserManager.cache.values()) {
-            user.save();
+            user.save(false);
         }
 
         for (Island island : IslandManager.cache.values()) {
-            island.save();
-            IslandDataManager.save(island);
+            island.save(false);
+            IslandDataManager.save(island, false);
         }
         try {
             Connection connection = getSqlManager().getConnection();

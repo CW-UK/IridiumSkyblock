@@ -103,7 +103,7 @@ public class User {
         holograms.clear();
     }
 
-    public void save() {
-        UserManager.saveUser(this);
+    public void save(boolean async) {
+        UserManager.saveUser(this, async);
     }
 }
