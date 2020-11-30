@@ -6,4 +6,5 @@ public class SQL {
     public String username = "";
     public String password = "";
     public int port = 3306;
+    public int poolSize = 25;
 }
