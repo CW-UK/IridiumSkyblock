@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -73,6 +74,8 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
                 return user.getIsland() != null ? user.getIsland().getName() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_crystals":
                 return user.getIsland() != null ? user.getIsland().getFormattedCrystals() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            case "island_crystals_unformatted":
+                return user.getIsland() != null ? String.valueOf(user.getIsland().getCrystals()) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_members":
                 return user.getIsland() != null ? user.getIsland().getMembers().size() + "" : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_members_online":
@@ -106,8 +109,12 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
                 return user.getIsland() != null ? user.getIsland().getFlightBooster() + "" : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_bank_vault":
                 return user.getIsland() != null ? user.getIsland().getFormattedMoney() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            case "island_bank_vault_unformatted":
+                return user.getIsland() != null ? df(user.getIsland().money, "0.00") : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_bank_experience":
                 return user.getIsland() != null ? user.getIsland().getFormattedExp() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            case "island_bank_experience_unformatted":
+                return user.getIsland() != null ? String.valueOf(user.getIsland().exp) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_biome":
                 return user.getIsland() != null ? user.getIsland().getBiome().name() + "" : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "midnight_seconds":
@@ -116,6 +123,8 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
                 return minute + "";
             case "midnight_hours":
                 return hours + "";
+            case "midnight_countdown":
+                return df(hours, "00") + ":" + df(minute, "00") + ":" + df(second, "00");
         }
         if (placeholder.startsWith("island_top_name_")) {
             try {
@@ -152,6 +161,7 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
             } catch (NumberFormatException ignored) {
 
             }
+
         }
         return null;
     }
@@ -161,6 +171,15 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
             return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', ph)).replace("\"","\\\"");
         }
         return ph.replace("\"","\\\"");
+    }
+
+    public String df(int i, String f) {
+        DecimalFormat df = new DecimalFormat(f);
+        return df.format(i);
+    }
+    public String df(double i, String f) {
+        DecimalFormat df = new DecimalFormat(f);
+        return df.format(i);
     }
 
 }
