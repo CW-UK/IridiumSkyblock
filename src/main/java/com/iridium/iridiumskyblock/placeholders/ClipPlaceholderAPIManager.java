@@ -72,8 +72,13 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
                 return user.getIsland() != null ? User.getUser(user.getIsland().getOwner()).name : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_name":
                 return user.getIsland() != null ? user.getIsland().getName() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            case "island_role":
+                return user.getIsland() != null ? user.getRole().toString() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_crystals":
                 return user.getIsland() != null ? user.getIsland().getFormattedCrystals() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            case "island_visit_status":
+                if (user.getIsland() == null) return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+                return user.getIsland().isVisit() ? IridiumSkyblock.getMessages().isPublic : IridiumSkyblock.getMessages().isPrivate;
             case "island_crystals_unformatted":
                 return user.getIsland() != null ? String.valueOf(user.getIsland().getCrystals()) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_members":

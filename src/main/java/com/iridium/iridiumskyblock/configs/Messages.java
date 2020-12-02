@@ -82,6 +82,8 @@ public class Messages {
     public String maxlevelreached = "N/A";
     public String yes = "&a&lYes";
     public String no = "&c&lNo";
+    public String isPrivate = "Private";
+    public String isPublic = "Public";
     public String islandNameTooLong = "%prefix% %name% is too long for the island name, The maximum size is %max_length%";
     public String islandNameTooShort = "%prefix% %name% is too short for the island name, The minimum size is %min_length%";
     public String changesIslandName = "%prefix% &7%player% changed your Island name to %name%";
