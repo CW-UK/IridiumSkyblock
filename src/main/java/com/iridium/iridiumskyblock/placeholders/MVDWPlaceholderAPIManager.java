@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -27,6 +28,15 @@ public class MVDWPlaceholderAPIManager {
             }
             User user = User.getUser(player);
             return user.getIsland() != null ? user.getIsland().getFormattedValue() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+        });
+
+        PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_value_unformatted", e -> {
+            Player player = e.getPlayer();
+            if (player == null) {
+                return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            }
+            User user = User.getUser(player);
+            return user.getIsland() != null ? df(user.getIsland().getValue(), "0.00") : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
         });
 
         PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_level", e -> {
@@ -72,6 +82,25 @@ public class MVDWPlaceholderAPIManager {
             }
             User user = User.getUser(player);
             return user.getIsland() != null ? user.getIsland().getFormattedCrystals() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+        });
+
+        PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_crystals_unformatted", e -> {
+            Player player = e.getPlayer();
+            if (player == null) {
+                return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            }
+            User user = User.getUser(player);
+            return user.getIsland() != null ? String.valueOf(user.getIsland().getCrystals()) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+        });
+
+        PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_visit_status", e -> {
+            Player player = e.getPlayer();
+            if (player == null) {
+                return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            }
+            User user = User.getUser(player);
+            if (user.getIsland() == null) return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            return user.getIsland().isVisit() ? IridiumSkyblock.getMessages().isPublic : IridiumSkyblock.getMessages().isPrivate;
         });
 
         PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_members", e -> {
@@ -198,6 +227,15 @@ public class MVDWPlaceholderAPIManager {
             return user.getIsland() != null ? user.getIsland().getFormattedMoney() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
         });
 
+        PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_bank_vault_unformatted", e -> {
+            Player player = e.getPlayer();
+            if (player == null) {
+                return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            }
+            User user = User.getUser(player);
+            return user.getIsland() != null ? df(user.getIsland().money, "0.00") : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+        });
+
         PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_bank_experience", e -> {
             Player player = e.getPlayer();
             if (player == null) {
@@ -205,6 +243,15 @@ public class MVDWPlaceholderAPIManager {
             }
             User user = User.getUser(player);
             return user.getIsland() != null ? user.getIsland().getFormattedExp() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+        });
+
+        PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_bank_experience_unformatted", e -> {
+            Player player = e.getPlayer();
+            if (player == null) {
+                return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            }
+            User user = User.getUser(player);
+            return user.getIsland() != null ? String.valueOf(user.getIsland().exp) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
         });
 
         PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_biome", e -> {
@@ -257,6 +304,21 @@ public class MVDWPlaceholderAPIManager {
             return hours + "";
         });
 
+        PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_midnight_countdown", e -> {
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            long time = (c.getTimeInMillis() - System.currentTimeMillis()) / 1000;
+            int day = (int) TimeUnit.SECONDS.toDays(time);
+            int hours = (int) Math.floor(TimeUnit.SECONDS.toHours(time - day * 86400));
+            int minute = (int) Math.floor((time - day * 86400 - hours * 3600) / 60.00);
+            int second = (int) Math.floor((time - day * 86400 - hours * 3600) % 60.00);
+            return df((double) hours, "00") + ":" + df((double) minute, "00") + ":" + df((double) second, "00");
+        });
+
         for (int i = 0; i < 10; i++) { //TODO there is probably a more efficient way to do this?
             int finalI = i;
             PlaceholderAPI.registerPlaceholder(IridiumSkyblock.getInstance(), "iridiumskyblock_island_top_owner_" + (i + 1), e -> {
@@ -283,5 +345,10 @@ public class MVDWPlaceholderAPIManager {
             return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', ph)).replace("\"","\\\"");
         }
         return ph.replace("\"","\\\"");
+    }
+
+    public String df(double i, String f) {
+        DecimalFormat df = new DecimalFormat(f);
+        return df.format(i);
     }
 }

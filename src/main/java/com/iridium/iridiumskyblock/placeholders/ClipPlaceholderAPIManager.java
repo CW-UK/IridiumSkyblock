@@ -64,6 +64,8 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
         switch (placeholder) {
             case "island_value":
                 return user.getIsland() != null ? user.getIsland().getFormattedValue() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            case "island_value_unformatted":
+                return user.getIsland() != null ? df(user.getIsland().getValue(), "0.00") : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_level":
                 return user.getIsland() != null ? Utils.NumberFormatter.format(Math.floor(user.getIsland().getValue() / IridiumSkyblock.getConfiguration().valuePerLevel)) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_rank":
@@ -76,11 +78,11 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
                 return user.getIsland() != null ? user.getRole().toString() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_crystals":
                 return user.getIsland() != null ? user.getIsland().getFormattedCrystals() : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
+            case "island_crystals_unformatted":
+                return user.getIsland() != null ? String.valueOf(user.getIsland().getCrystals()) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_visit_status":
                 if (user.getIsland() == null) return IridiumSkyblock.getConfiguration().placeholderDefaultValue;
                 return user.getIsland().isVisit() ? IridiumSkyblock.getMessages().isPublic : IridiumSkyblock.getMessages().isPrivate;
-            case "island_crystals_unformatted":
-                return user.getIsland() != null ? String.valueOf(user.getIsland().getCrystals()) : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_members":
                 return user.getIsland() != null ? user.getIsland().getMembers().size() + "" : IridiumSkyblock.getConfiguration().placeholderDefaultValue;
             case "island_members_online":
@@ -129,7 +131,7 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
             case "midnight_hours":
                 return hours + "";
             case "midnight_countdown":
-                return df(hours, "00") + ":" + df(minute, "00") + ":" + df(second, "00");
+                return df((double) hours, "00") + ":" + df((double) minute, "00") + ":" + df((double) second, "00");
         }
         if (placeholder.startsWith("island_top_name_")) {
             try {
@@ -178,10 +180,6 @@ public class ClipPlaceholderAPIManager extends PlaceholderExpansion {
         return ph.replace("\"","\\\"");
     }
 
-    public String df(int i, String f) {
-        DecimalFormat df = new DecimalFormat(f);
-        return df.format(i);
-    }
     public String df(double i, String f) {
         DecimalFormat df = new DecimalFormat(f);
         return df.format(i);
