@@ -114,6 +114,7 @@ public class Messages {
     public String islandDeleted = "%prefix% &7Your island has been deleted";
     public String mustBeInIsland = "%prefix% &7You must be in your island to do this.";
     public String cannotSellItem = "%prefix% &7This is not a sellable item.";
+    public String cannotBuyItem = "%prefix% &7This is not a buyable item.";
     public String blockLimitReached = "%prefix% &7The island limit for this block has already been reached";
     public String unknownCommand = "%prefix% &7Unknown Command, Try /is help";
     public String noPermissionBuild = "%prefix% &7You do not have permission to build on this island";
