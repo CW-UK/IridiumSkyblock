@@ -427,9 +427,9 @@ public class Utils {
             }
         }
         if (IridiumSkyblock.getInstance().getEconomy() != null) {
-            if (IridiumSkyblock.getInstance().getEconomy().getBalance(p) >= vault) {
+            if (IridiumSkyblock.getInstance().getEconomy().getBalance(p) >= vault && crystals == 0) {
                 IridiumSkyblock.getInstance().getEconomy().withdrawPlayer(p, vault);
-                TransactionLogger.saveTransaction(p, new Transaction().add(TransactionType.MONEY, -vault).add(TransactionType.CRYSTALS, -crystals));
+                TransactionLogger.saveTransaction(p, new Transaction().add(TransactionType.MONEY, -vault));
                 return BuyResponce.SUCCESS;
             }
             return BuyResponce.NOT_ENOUGH_VAULT;

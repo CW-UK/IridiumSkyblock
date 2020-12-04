@@ -212,7 +212,7 @@ public class ShopGUI extends GUI implements Listener {
                                             .replace("%money%", Utils.NumberFormatter.format(item.buyVault))));
                                 }
                             } else {
-                                e.getWhoClicked().sendMessage(Utils.color((responce == Utils.BuyResponce.NOT_ENOUGH_VAULT ? IridiumSkyblock.getMessages().cantBuy.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix) : IridiumSkyblock.getMessages().notEnoughCrystals).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
+                                e.getWhoClicked().sendMessage(Utils.color((responce == Utils.BuyResponce.NOT_ENOUGH_VAULT ? IridiumSkyblock.getMessages().cantBuy : IridiumSkyblock.getMessages().notEnoughCrystals).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
                             }
                         } else {
                             e.getWhoClicked().sendMessage(Utils.color(IridiumSkyblock.getMessages().cannotBuyItem.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
