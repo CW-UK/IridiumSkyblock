@@ -4,6 +4,7 @@ import com.iridium.iridiumskyblock.IridiumSkyblock;
 import com.iridium.iridiumskyblock.configs.Config;
 import com.iridium.iridiumskyblock.managers.IslandManager;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -14,20 +15,20 @@ public class CreatureSpawnListener implements Listener {
 
     @EventHandler
     public void onCreatureSpawnEvent(CreatureSpawnEvent event) {
-
-        Config config = IridiumSkyblock.getConfiguration();
-        if (!config.disableNaturalAnimalSpawns && !config.disableNaturalMonsterSpawns) return;
-        if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL) return;
-
-        final Location location = event.getEntity().getLocation();
-        final IslandManager islandManager = IridiumSkyblock.getIslandManager();
-        if (!islandManager.isIslandWorld(location)) return;
-
-        if ((event.getEntity() instanceof Monster && config.disableNaturalMonsterSpawns) || (event.getEntity() instanceof Animals && config.disableNaturalAnimalSpawns)) {
-            event.setCancelled(true);
-            return;
+        try {
+            final Config config = IridiumSkyblock.getConfiguration();
+            final Entity entity = event.getEntity();
+            final Location location = entity.getLocation();
+            if (!IridiumSkyblock.getIslandManager().isIslandWorld(location) || event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL || (!config.disableNaturalAnimalSpawns && !config.disableNaturalMonsterSpawns)) {
+                return;
+            }
+            if ((entity instanceof Monster && config.disableNaturalMonsterSpawns) || (entity instanceof Animals && config.disableNaturalAnimalSpawns)) {
+                event.setCancelled(true);
+                return;
+            }
+        } catch (Exception e) {
+            IridiumSkyblock.getInstance().sendErrorMessage(e);
         }
-
     }
 
 }
