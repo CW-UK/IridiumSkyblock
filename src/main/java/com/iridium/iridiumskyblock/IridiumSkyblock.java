@@ -100,6 +100,8 @@ public class IridiumSkyblock extends JavaPlugin {
 
     public static int blockspertick;
 
+    public boolean useHex;
+
     public static Upgrades getUpgrades() {
         if (upgrades == null) {
             upgrades = new Upgrades();
@@ -140,6 +142,7 @@ public class IridiumSkyblock extends JavaPlugin {
         try {
             generator = new SkyblockGenerator();
             instance = this;
+            useHex = Bukkit.getBukkitVersion().contains("1.16");
 
             super.onEnable();
             Bukkit.getUpdateFolderFile().mkdir();

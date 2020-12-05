@@ -64,14 +64,14 @@ public class v1_16_R1 implements NMS {
 
     @Override
     public void sendSubTitle(Player player, String message, int fadeIn, int displayTime, int fadeOut) {
-        IChatBaseComponent iChatBaseComponent = IChatBaseComponent.ChatSerializer.a(ChatColor.translateAlternateColorCodes('&', "{\"text\":\"" + message + "\"}"));
+        IChatBaseComponent iChatBaseComponent = IChatBaseComponent.ChatSerializer.a(Utils.color("{\"text\":\"" + message + "\"}"));
         PacketPlayOutTitle packetPlayOutTitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.SUBTITLE, iChatBaseComponent, fadeIn, displayTime, fadeOut);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutTitle);
     }
 
     @Override
     public void sendTitle(Player player, String message, int fadeIn, int displayTime, int fadeOut) {
-        IChatBaseComponent iChatBaseComponent = IChatBaseComponent.ChatSerializer.a(ChatColor.translateAlternateColorCodes('&', "{\"text\":\"" + message + "\"}"));
+        IChatBaseComponent iChatBaseComponent = IChatBaseComponent.ChatSerializer.a(Utils.color("{\"text\":\"" + message + "\"}"));
         PacketPlayOutTitle packetPlayOutTitle = new PacketPlayOutTitle(PacketPlayOutTitle.EnumTitleAction.TITLE, iChatBaseComponent, fadeIn, displayTime, fadeOut);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutTitle);
     }

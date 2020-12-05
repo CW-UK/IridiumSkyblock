@@ -8,6 +8,7 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,6 +33,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -57,7 +60,7 @@ public class Utils {
         ItemStack item = new ItemStack(material, amount, (short) type);
         ItemMeta m = item.getItemMeta();
         m.setLore(lore);
-        m.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        m.setDisplayName(Utils.color(name));
         item.setItemMeta(m);
         return item;
     }
@@ -67,7 +70,7 @@ public class Utils {
         if (item == null) return null;
         item.setAmount(amount);
         ItemMeta m = item.getItemMeta();
-        m.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        m.setDisplayName(Utils.color(name));
         item.setItemMeta(m);
         return item;
     }
@@ -78,7 +81,7 @@ public class Utils {
         item.setAmount(amount);
         ItemMeta m = item.getItemMeta();
         m.setLore(Utils.color(lore));
-        m.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        m.setDisplayName(Utils.color(name));
         item.setItemMeta(m);
         return item;
     }
@@ -226,6 +229,15 @@ public class Utils {
     }
 
     public static String color(String string) {
+        if (IridiumSkyblock.getInstance().useHex) {
+            final Pattern HEX_PATTERN = Pattern.compile("&(#\\w{6})");
+            Matcher matcher = HEX_PATTERN.matcher(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', string));
+            StringBuffer buffer = new StringBuffer();
+            while (matcher.find()) {
+                matcher.appendReplacement(buffer, net.md_5.bungee.api.ChatColor.of(matcher.group(1)).toString());
+            }
+            return matcher.appendTail(buffer).toString();
+        }
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 

@@ -280,7 +280,7 @@ public class MVDWPlaceholderAPIManager {
 
     public String phCheckIfStripped(String ph) {
         if (IridiumSkyblock.getConfiguration().stripTopIslandPlaceholderColors) {
-            return ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', ph)).replace("\"","\\\"");
+            return ChatColor.stripColor(Utils.color(ph)).replace("\"","\\\"");
         }
         return ph.replace("\"","\\\"");
     }
