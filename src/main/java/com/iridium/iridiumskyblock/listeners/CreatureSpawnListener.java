@@ -16,14 +16,14 @@ public class CreatureSpawnListener implements Listener {
     public void onCreatureSpawnEvent(CreatureSpawnEvent event) {
 
         Config config = IridiumSkyblock.getConfiguration();
-        if (!config.disableNaturalAnimalSpawns && !config.disableNaturalMobSpawns) return;
+        if (!config.disableNaturalAnimalSpawns && !config.disableNaturalMonsterSpawns) return;
         if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL) return;
 
         final Location location = event.getEntity().getLocation();
         final IslandManager islandManager = IridiumSkyblock.getIslandManager();
         if (!islandManager.isIslandWorld(location)) return;
 
-        if ((event.getEntity() instanceof Monster && config.disableNaturalMobSpawns) || (event.getEntity() instanceof Animals && config.disableNaturalAnimalSpawns)) {
+        if ((event.getEntity() instanceof Monster && config.disableNaturalMonsterSpawns) || (event.getEntity() instanceof Animals && config.disableNaturalAnimalSpawns)) {
             event.setCancelled(true);
             return;
         }
