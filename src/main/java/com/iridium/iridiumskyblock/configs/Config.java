@@ -56,6 +56,8 @@ public class Config {
     public boolean ignoreCooldownOnJoinCreation = false;
     public boolean enableBlockStacking = true;
     public boolean stripTopIslandPlaceholderColors = true;
+    public boolean disableNaturalMobSpawns = false;
+    public boolean disableNaturalAnimalSpawns = false;
     public int deleteBackupsAfterDays = 7;
     public int regenCooldown = 3600;
     public int distance = 151;
