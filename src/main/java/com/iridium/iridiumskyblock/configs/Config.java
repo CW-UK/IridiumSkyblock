@@ -56,8 +56,6 @@ public class Config {
     public boolean ignoreCooldownOnJoinCreation = false;
     public boolean enableBlockStacking = true;
     public boolean stripTopIslandPlaceholderColors = true;
-    public boolean disableNaturalMonsterSpawns = false;
-    public boolean disableNaturalAnimalSpawns = false;
     public int deleteBackupsAfterDays = 7;
     public int regenCooldown = 3600;
     public int distance = 151;
@@ -119,5 +117,8 @@ public class Config {
         public int crystals = 5;
         public XMaterial icon = XMaterial.GRASS_BLOCK;
     }
+
+    public boolean denyNaturalSpawnWhitelist = false;
+    public List<EntityType> denyNaturalSpawn = Arrays.asList(EntityType.PHANTOM);
 
 }
