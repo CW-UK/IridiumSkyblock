@@ -23,9 +23,7 @@ public class CreatureSpawnListener implements Listener {
             if ((!config.denyNaturalSpawnWhitelist && config.denyNaturalSpawn.contains(entity.getType()))
                     || (config.denyNaturalSpawnWhitelist && !config.denyNaturalSpawn.contains(entity.getType()))) {
                 event.setCancelled(true);
-                return;
             }
-
         } catch (Exception e) {
             IridiumSkyblock.getInstance().sendErrorMessage(e);
         }
