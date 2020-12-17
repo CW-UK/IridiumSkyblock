@@ -58,7 +58,7 @@ public class VisitorGUI extends GUI implements Listener {
             if (visitors.containsKey(i)) {
                 Player visitor = visitors.get(i);
                 if (island.isInIsland(visitor.getLocation())) {
-                    if (User.getUser(visitor).bypassing) {
+                    if (User.getUser(visitor).bypassing || visitor.hasPermission("iridiumskyblock.visitbypass")) {
                         e.getWhoClicked().sendMessage(Utils.color(IridiumSkyblock.getMessages().cantExpelPlayer.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix).replace("%player%", visitor.getName() + "")));
                     } else {
                         island.spawnPlayer(visitor);

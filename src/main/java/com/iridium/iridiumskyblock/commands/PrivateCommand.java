@@ -25,7 +25,9 @@ public class PrivateCommand extends Command {
                 user.getIsland().setVisit(false);
                 int visitorCount = 0;
                 for (Player visitor : user.getIsland().getPlayersOnIsland()) {
-                    if (user.getIsland().equals(User.getUser(visitor).getIsland()) || User.getUser(visitor).bypassing || user.getIsland().isCoop(User.getUser(visitor).getIsland())) continue;
+                    if (user.getIsland().equals(User.getUser(visitor).getIsland()) || User.getUser(visitor).bypassing || user.getIsland().isCoop(User.getUser(visitor).getIsland()) || visitor.hasPermission("iridiumskyblock.visitbypass"))
+                        continue;
+
                     user.getIsland().spawnPlayer(visitor);
                     visitor.sendMessage(Utils.color(IridiumSkyblock.getMessages().expelledIslandLocked
                             .replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)

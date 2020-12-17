@@ -33,7 +33,7 @@ public class ExpelCommand extends Command {
             if (visitor != null) {
                 if (!island.equals(User.getUser(visitor).getIsland())) {
                     if (island.isInIsland(visitor.getLocation())) {
-                        if (!(User.getUser(visitor).bypassing)) {
+                        if (!(User.getUser(visitor).bypassing) && !visitor.hasPermission("iridiumskyblock.visitbypass")) {
                             island.spawnPlayer(visitor);
                             sender.sendMessage(Utils.color(IridiumSkyblock.getMessages().expelledVisitor.replace("%player%", visitor.getName()).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
                             visitor.sendMessage(Utils.color(IridiumSkyblock.getMessages().youHaveBeenExpelled.replace("%kicker%", p.getName()).replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));

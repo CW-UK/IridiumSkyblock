@@ -39,7 +39,7 @@ public class PlayerTeleportListener implements Listener {
             }
             if (user.islandID == toIsland.getId()) return;
 
-            if ((toIsland.isVisit() && !toIsland.isBanned(user)) || user.bypassing) {
+            if ((toIsland.isVisit() && !toIsland.isBanned(user)) || user.bypassing || player.hasPermission("iridiumskyblock.visitbypass")) {
                 if (!toIsland.isInIsland(fromLocation)) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(IridiumSkyblock.getInstance(), () -> toIsland.sendBorder(player), 1);
                     if (user.islandID != toIsland.getId()) {

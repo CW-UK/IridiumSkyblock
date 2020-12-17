@@ -842,7 +842,7 @@ public class Island {
         if (User.getUser(p).teleportingHome) {
             return;
         }
-        if (isBanned(User.getUser(p)) && !members.contains(p.getUniqueId().toString())) {
+        if (isBanned(User.getUser(p)) && !members.contains(p.getUniqueId().toString()) && !p.hasPermission("iridiumskyblock.visitbypass")) {
             p.sendMessage(Utils.color(IridiumSkyblock.getMessages().bannedFromIsland.replace("%prefix%", IridiumSkyblock.getConfiguration().prefix)));
             return;
         }
